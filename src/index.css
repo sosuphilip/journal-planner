@@ -1,0 +1,364 @@
+@import "tailwindcss";
+
+@theme {
+  --font-hand: "Caveat", "Patrick Hand", cursive;
+  --font-hand-alt: "Patrick Hand", "Caveat", cursive;
+
+  --color-sage: #b8c9a3;
+  --color-sage-light: #d4e4c5;
+  --color-dusty-blue: #9bb4c9;
+  --color-dusty-blue-light: #c5d8e6;
+  --color-muted-pink: #d9a5a5;
+  --color-muted-pink-light: #f0d4d4;
+  --color-soft-yellow: #f0dfa0;
+  --color-soft-yellow-light: #f7edc5;
+  --color-muted-red: #c97b7b;
+  --color-accent-blue: #6a9ec0;
+  --color-tab-orange: #e8a87c;
+  --color-tab-blue: #7ca5c9;
+  --color-tab-green: #8cb88c;
+}
+
+/* ========================================
+   THEME VARIABLES (light / dark)
+   ======================================== */
+:root {
+  --bg: #e8e2d6;
+  --page: #fdfcf8;
+  --page-border: rgba(197,185,168,0.3);
+  --text: #5a4e3e;
+  --text-muted: #8a7a6a;
+  --text-faint: #a09484;
+  --border: rgba(197,185,168,0.4);
+  --border-strong: rgba(197,185,168,0.5);
+  --card-bg: rgba(255,255,248,0.5);
+  --card-border: rgba(197,185,168,0.5);
+  --journal-bg: rgba(255,255,248,0.3);
+  --journal-border: rgba(197,185,168,0.3);
+  --dot-grid: rgba(180,180,170,0.18);
+  --shadow: rgba(0,0,0,0.08);
+  --tab-2026-bg: linear-gradient(135deg, #d9a5a5, #f0d4d4);
+  --tab-date-bg: linear-gradient(135deg, #7ca5c9, #c5d8e6);
+  --tray-bg: rgba(250,246,238,0.95);
+  --tray-border: rgba(197,185,168,0.5);
+  --selected-bg: rgba(184,201,163,0.15);
+  --today-bg: rgba(155,180,201,0.1);
+  --music-bg: rgba(240,223,160,0.15);
+  --sticker-tray-bg: linear-gradient(135deg, #d9a5a5, #f0dfa0);
+  --clear-btn-bg: rgba(250,246,238,0.9);
+  --color-cream: #faf6ee;
+  --input-hover-bg: rgba(255,255,255,0.6);
+  --habit-hover: rgba(184,201,163,0.15);
+}
+
+.dark {
+  --bg: #1c1815;
+  --page: #2a2520;
+  --page-border: rgba(120,110,95,0.5);
+  --text: #e8ddd0;
+  --text-muted: #c0b0a0;
+  --text-faint: #907e6e;
+  --border: rgba(120,110,95,0.5);
+  --border-strong: rgba(140,125,110,0.6);
+  --card-bg: rgba(60,52,44,0.7);
+  --card-border: rgba(140,125,110,0.5);
+  --journal-bg: rgba(50,44,38,0.5);
+  --journal-border: rgba(120,110,95,0.4);
+  --dot-grid: rgba(140,130,115,0.18);
+  --shadow: rgba(0,0,0,0.35);
+  --tab-2026-bg: linear-gradient(135deg, #b06060, #c88080);
+  --tab-date-bg: linear-gradient(135deg, #6090c0, #80a8d0);
+  --tray-bg: rgba(50,44,38,0.95);
+  --tray-border: rgba(140,125,110,0.5);
+  --selected-bg: rgba(130,180,100,0.18);
+  --today-bg: rgba(120,160,210,0.15);
+  --music-bg: rgba(220,180,90,0.15);
+  --sticker-tray-bg: linear-gradient(135deg, #b06060, #c0a040);
+  --clear-btn-bg: rgba(60,52,44,0.9);
+  --input-hover-bg: rgba(70,62,52,0.7);
+  --habit-hover: rgba(130,180,100,0.15);
+}
+
+.dark .check-item-checked {
+  opacity: 0.5;
+}
+
+.dark .inline-edit:hover {
+  border-bottom-color: rgba(180,170,155,0.4);
+}
+
+.dark .habit-cell:hover {
+  background-color: rgba(130,180,100,0.15);
+}
+
+/* ========================================
+   GLOBAL RESETS & BASE STYLES
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: var(--font-hand);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 17px;
+}
+
+/* Dark mode: stronger page shadows for depth */
+.dark .page-shadow-left {
+  box-shadow: inset -8px 0 20px -10px rgba(0,0,0,0.25);
+}
+
+.dark .page-shadow-right {
+  box-shadow: inset 8px 0 20px -10px rgba(0,0,0,0.25);
+}
+
+/* ========================================
+   DOT GRID PATTERN (right page background)
+   ======================================== */
+.dot-grid-bg {
+  background-image: radial-gradient(circle, var(--color-dot-grid) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* ========================================
+   TEXTAREA & INPUT RESETS (prevent resize handle overflow)
+   ======================================== */
+textarea, input[type="text"] {
+  font-family: var(--font-hand);
+  outline: none;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  resize: none;
+}
+
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+}
+
+/* ========================================
+   CHECKBOX STYLES
+   ======================================== */
+.check-item-checked {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* ========================================
+   NON-EDITABLE / DECORATIVE REGIONS
+   ======================================== */
+.no-interact {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ========================================
+   STICKER LAYER
+   ======================================== */
+.sticker-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.sticker-layer .sticker-item {
+  pointer-events: auto;
+  position: absolute;
+  cursor: grab;
+}
+
+.sticker-layer .sticker-item:active {
+  cursor: grabbing;
+}
+
+/* ========================================
+   STICKER CONTROLS (rotate/delete handles)
+   ======================================== */
+.sticker-handle {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ========================================
+   TRAY
+   ======================================== */
+.sticker-tray {
+  pointer-events: auto;
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
+@keyframes pop-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse-once {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@keyframes droplet-fill {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  0% { transform: translateX(-6px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   ANIMATED ELEMENTS
+   ======================================== */
+
+/* Water droplet */
+.water-drop {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.water-drop:hover {
+  transform: scale(1.18);
+  filter: brightness(1.1);
+}
+
+.water-drop-filled {
+  animation: droplet-fill 0.3s ease;
+}
+
+/* Habit cell pulse */
+.habit-cell-pulse {
+  animation: pulse-once 0.25s ease;
+}
+
+/* Sticker pop-in */
+.sticker-pop {
+  animation: pop-in 0.35s ease forwards;
+}
+
+/* Sticker tray panel slide */
+.tray-panel-enter {
+  animation: fade-up 0.25s ease;
+}
+
+/* Day row selected indicator */
+.day-dot-enter {
+  animation: pop-in 0.3s ease;
+}
+
+/* Checklist item check animation */
+.check-anim {
+  animation: pulse-once 0.2s ease;
+}
+
+/* ========================================
+   HABIT CELL CLICK CYCLE
+   ======================================== */
+.habit-cell {
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.habit-cell:hover {
+  background-color: rgba(184,201,163,0.15);
+}
+
+/* ========================================
+   NAV ARROW
+   ======================================== */
+.nav-arrow {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.nav-arrow:hover {
+  transform: scale(1.15);
+}
+
+/* ========================================
+   SCROLLBAR HIDE
+   ======================================== */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ========================================
+   INLINE EDITABLE TEXT
+   ======================================== */
+.inline-edit {
+  cursor: text;
+  min-width: 1ch;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.2s ease;
+}
+
+.inline-edit:hover {
+  border-bottom-color: rgba(128,128,128,0.3);
+}
+
+.inline-edit:focus {
+  border-bottom-color: var(--color-dusty-blue);
+  outline: none;
+}
+
+/* ========================================
+   DAY ROW SELECTED
+   ======================================== */
+.day-row {
+  transition: background-color 0.2s ease;
+}
+
+/* ========================================
+   CHECKBOX TOGGLE
+   ======================================== */
+.check-toggle {
+  transition: transform 0.15s ease;
+}
+
+.check-toggle:active {
+  transform: scale(0.85);
+}
+
+/* ========================================
+   PAGE SHADOW / BOOK EFFECT
+   ======================================== */
+.page-shadow-left {
+  box-shadow: inset -8px 0 20px -10px rgba(0,0,0,0.08);
+}
+
+.page-shadow-right {
+  box-shadow: inset 8px 0 20px -10px rgba(0,0,0,0.08);
+}
+
+.dark .page-shadow-left {
+  box-shadow: inset -8px 0 20px -10px rgba(0,0,0,0.25);
+}
+
+.dark .page-shadow-right {
+  box-shadow: inset 8px 0 20px -10px rgba(0,0,0,0.25);
+}
