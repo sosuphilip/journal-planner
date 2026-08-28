@@ -35,6 +35,9 @@ export default function DayRow({ day, index, isToday, isSelected, onSelect, onDa
     onDayUpdate({ ...day, specialNote: text });
   };
 
+  // Show notes field on all days except Sunday
+  const showNotes = !isSun;
+
   const todayBg = isToday ? "var(--today-bg)" : "transparent";
   const selectedBg = isSelected ? "var(--selected-bg)" : todayBg;
 
@@ -146,6 +149,17 @@ export default function DayRow({ day, index, isToday, isSelected, onSelect, onDa
             onChange={handleItemsChange}
             showCheckboxes={true}
             className="text-base"
+          />
+        )}
+
+        {/* Notes field — shown on all days except Sunday */}
+        {showNotes && !isFri && !isSat && (
+          <EditableText
+            value={specialNote}
+            onChange={handleSpecialNote}
+            className="font-hand text-sm mt-0.5 italic"
+            style={{ color: "var(--text-faint)" }}
+            placeholder="add note..."
           />
         )}
       </div>
