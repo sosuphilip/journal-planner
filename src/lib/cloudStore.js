@@ -12,27 +12,38 @@ import { uid, fmtDate } from "../store";
 
 /** Load all user data from Supabase */
 export async function loadCloudStore(userId) {
-  // Load weeks
-  const { data: weekRows } = await supabase
-    .from("weeks")
-    .select("*")
-    .eq("user_id", userId);
+  // Load weeks — if this fails, fall back to empty
+  let weeks = {};
+  try {
+    const { data: weekRows } = await supabase
+      .from("weeks")
+      .select("*")
+      .eq("user_id", userId);
 
-  const weeks = {};
-  if (weekRows) {
-    for (const row of weekRows) {
-      weeks[row.week_start] = {
-        days: row.days_data,
-      };
+    if (weekRows) {
+      for (const row of weekRows) {
+        weeks[row.week_start] = {
+          days: row.days_data,
+        };
+      }
     }
+  } catch (e) {
+    console.error("Failed to load weeks:", e);
   }
 
   // Load settings (todoCard, habits, waterTrack, stickers, etc.)
-  const { data: settings } = await supabase
-    .from("settings")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
+  // Use maybeSingle() instead of single() — .single() throws on 0 rows
+  let settings = null;
+  try {
+    const result = await supabase
+      .from("settings")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
+    settings = result.data;
+  } catch (e) {
+    console.error("Failed to load settings:", e);
+  }
 
   return {
     weeks,

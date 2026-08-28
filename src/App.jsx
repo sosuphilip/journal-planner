@@ -102,20 +102,38 @@ export default function App() {
 
   // Listen for auth changes
   useEffect(() => {
+    let resolved = false;
+
+    const finalize = (u) => {
+      if (resolved) return;
+      resolved = true;
+      setUser(u);
+      setAuthLoading(false);
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user ?? null);
-        setAuthLoading(false);
+        finalize(session?.user ?? null);
       }
     );
 
     // Check initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setAuthLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        finalize(session?.user ?? null);
+      })
+      .catch(() => {
+        finalize(null);
+      });
 
-    return () => subscription.unsubscribe();
+    // Safety net — if neither fires, don't leave the user stuck
+    const fallbackTimer = setTimeout(() => finalize(null), 5000);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Load data from Supabase when user logs in
@@ -127,21 +145,28 @@ export default function App() {
     }
 
     setDataLoading(true);
-    loadCloudStore(user.id).then((cloudData) => {
-      // If no weeks exist yet, create defaults
-      if (Object.keys(cloudData.weeks).length === 0) {
-        const defaultStore = initStore();
-        // Save each default week to cloud
-        for (const [weekKey, weekData] of Object.entries(defaultStore.weeks)) {
-          saveWeek(user.id, weekKey, weekData);
+    loadCloudStore(user.id)
+      .then((cloudData) => {
+        // If no weeks exist yet, create defaults
+        if (Object.keys(cloudData.weeks).length === 0) {
+          const defaultStore = initStore();
+          // Save each default week to cloud
+          for (const [weekKey, weekData] of Object.entries(defaultStore.weeks)) {
+            saveWeek(user.id, weekKey, weekData);
+          }
+          saveSettings(user.id, defaultStore);
+          setStore(defaultStore);
+        } else {
+          setStore(cloudData);
         }
-        saveSettings(user.id, defaultStore);
-        setStore(defaultStore);
-      } else {
-        setStore(cloudData);
-      }
-      setDataLoading(false);
-    });
+        setDataLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load cloud data:", err);
+        // Fall back to local defaults so the app isn't stuck
+        setStore(initStore());
+        setDataLoading(false);
+      });
   }, [user]);
 
   // Initialize selected day to today if in current week, else 0
@@ -265,8 +290,15 @@ export default function App() {
   // Show auth screen if not logged in
   if (authLoading) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div className="w-screen h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg)" }}>
         <span className="font-hand text-lg" style={{ color: "var(--text-muted)" }}>Loading...</span>
+        <button
+          onClick={() => window.location.reload()}
+          className="font-hand text-sm underline cursor-pointer bg-transparent border-none"
+          style={{ color: "var(--color-accent-blue)" }}
+        >
+          Try again
+        </button>
       </div>
     );
   }
