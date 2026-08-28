@@ -133,6 +133,17 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     setSelectedId(null);
   };
 
+  // Deselect sticker when clicking anywhere outside a sticker
+  useEffect(() => {
+    const handleDocumentClick = (e) => {
+      if (!e.target.closest(".sticker-item") && !e.target.closest(".sticker-tray")) {
+        setSelectedId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleDocumentClick);
+    return () => document.removeEventListener("mousedown", handleDocumentClick);
+  }, []);
+
   // Handle drop from tray
   const [isDragActive, setIsDragActive] = useState(false);
 
@@ -196,12 +207,11 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     <div
       className="sticker-layer"
       style={{
-        pointerEvents: "auto",
+        pointerEvents: isDragActive ? "auto" : "none",
         userSelect: "none",
       }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
-      onClick={() => setSelectedId(null)}
     >
       {placedStickers.map((sticker) => {
         const isSelected = selectedId === sticker.id;
@@ -230,7 +240,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
             {/* Inner div: handles pop-in animation (no transform conflict) */}
             <div
               className={`sticker-item ${isNew ? "sticker-pop" : ""}`}
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "100%", pointerEvents: "auto" }}
             >
               {getStickerContent(sticker)}
             </div>
