@@ -7,6 +7,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "./lib/supabase";
 import {
   loadCloudStore,
+  loadCachedCloudStore,
   saveWeek,
   saveSettings,
 } from "./lib/cloudStore";
@@ -130,7 +131,7 @@ export default function App() {
     };
   }, []);
 
-  // Load data from Supabase when user logs in
+  // Load data — instant from cache, then refresh from cloud in background
   useEffect(() => {
     if (!user) {
       setStore(null);
@@ -138,13 +139,21 @@ export default function App() {
       return;
     }
 
-    setDataLoading(true);
+    // 1. Load instantly from localStorage cache (no loading screen)
+    const cached = loadCachedCloudStore(user.id);
+    if (cached) {
+      setStore(cached);
+      setDataLoading(false);
+    } else {
+      // No cache yet — show loading only if we must
+      setDataLoading(true);
+    }
+
+    // 2. Fetch fresh data from Supabase in background
     loadCloudStore(user.id)
       .then((cloudData) => {
-        // If no weeks exist yet, create defaults
         if (Object.keys(cloudData.weeks).length === 0) {
           const defaultStore = initStore();
-          // Save each default week to cloud
           for (const [weekKey, weekData] of Object.entries(defaultStore.weeks)) {
             saveWeek(user.id, weekKey, weekData);
           }
@@ -157,9 +166,11 @@ export default function App() {
       })
       .catch((err) => {
         console.error("Failed to load cloud data:", err);
-        // Fall back to local defaults so the app isn't stuck
-        setStore(initStore());
-        setDataLoading(false);
+        if (!cached) {
+          setStore(initStore());
+          setDataLoading(false);
+        }
+        // If we had cache, keep using it — don't overwrite with error
       });
   }, [user]);
 

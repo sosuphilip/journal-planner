@@ -10,52 +10,65 @@ import { uid, fmtDate } from "../store";
 
 // ── Public API ───────────────────────────────────────────
 
-/** Load all user data from Supabase */
+const CACHE_KEY = "planner-cloud-cache";
+
+/** Save cloud data to localStorage for instant loading next time */
+function cacheCloudData(userId, data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ userId, data }));
+  } catch { /* quota exceeded, ignore */ }
+}
+
+/** Load cached data from localStorage (returns null if missing or wrong user) */
+function loadCachedData(userId) {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed.userId === userId ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Load all user data from Supabase (queries run in parallel) */
 export async function loadCloudStore(userId) {
-  // Load weeks — if this fails, fall back to empty
+  // Run both queries in parallel instead of sequentially
+  const [weeksResult, settingsResult] = await Promise.allSettled([
+    supabase.from("weeks").select("*").eq("user_id", userId),
+    supabase.from("settings").select("*").eq("user_id", userId).maybeSingle(),
+  ]);
+
+  // Parse weeks
   let weeks = {};
-  try {
-    const { data: weekRows } = await supabase
-      .from("weeks")
-      .select("*")
-      .eq("user_id", userId);
-
-    if (weekRows) {
-      for (const row of weekRows) {
-        weeks[row.week_start] = {
-          days: row.days_data,
-        };
-      }
+  if (weeksResult.status === "fulfilled" && weeksResult.value.data) {
+    for (const row of weeksResult.value.data) {
+      weeks[row.week_start] = { days: row.days_data };
     }
-  } catch (e) {
-    console.error("Failed to load weeks:", e);
   }
 
-  // Load settings (todoCard, habits, waterTrack, stickers, etc.)
-  // Use maybeSingle() instead of single() — .single() throws on 0 rows
-  let settings = null;
-  try {
-    const result = await supabase
-      .from("settings")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
-    settings = result.data;
-  } catch (e) {
-    console.error("Failed to load settings:", e);
-  }
+  // Parse settings
+  const settings =
+    settingsResult.status === "fulfilled" ? settingsResult.value.data : null;
 
-  return {
+  const cloudData = {
     weeks,
-    todoCard: settings?.todo_card || {
-      title: "app-plan todo",
-      items: [],
-    },
+    todoCard: settings?.todo_card || { title: "app-plan todo", items: [] },
     habits: settings?.habits || [],
     waterTrack: settings?.water_track || {},
     customStickers: settings?.custom_stickers || [],
     placedStickers: settings?.placed_stickers || [],
   };
+
+  // Cache to localStorage for instant load next time
+  cacheCloudData(userId, cloudData);
+
+  return cloudData;
+}
+
+/** Load from cache instantly (synchronous, no network) */
+export function loadCachedCloudStore(userId) {
+  return loadCachedData(userId);
 }
 
 /** Save a single week to Supabase */
