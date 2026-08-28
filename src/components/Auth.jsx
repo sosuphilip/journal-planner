@@ -16,17 +16,21 @@ export default function Auth() {
     setLoading(true);
     setError("");
 
-    const fn =
-      mode === "sign-up"
-        ? supabase.auth.signUp({ email, password })
-        : supabase.auth.signInWithPassword({ email, password });
+    try {
+      const fn =
+        mode === "sign-up"
+          ? supabase.auth.signUp({ email, password })
+          : supabase.auth.signInWithPassword({ email, password });
 
-    const { error: authError } = await fn;
+      const { error: authError } = await fn;
 
-    if (authError) {
-      setError(authError.message);
-    } else if (mode === "sign-up") {
-      setError("Check your email for a confirmation link!");
+      if (authError) {
+        setError(authError.message);
+      } else if (mode === "sign-up") {
+        setError("Check your email for a confirmation link!");
+      }
+    } catch (err) {
+      setError(err?.message || "Something went wrong. Please try again.");
     }
 
     setLoading(false);
@@ -34,14 +38,24 @@ export default function Auth() {
 
   const handleGoogle = async () => {
     setLoading(true);
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-    if (authError) {
-      setError(authError.message);
+    setError("");
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+      } else {
+        // signInWithOAuth succeeds and redirects — if we're still here
+        // after 3s, the redirect likely failed or was cancelled
+        setTimeout(() => setLoading(false), 3000);
+      }
+    } catch (err) {
+      setError(err?.message || "Google sign-in failed. Please try again.");
       setLoading(false);
     }
   };
