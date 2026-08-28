@@ -189,7 +189,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "copy";
-  };
+  };  // Track which stickers have already played the pop-in animation
+  const animatedRef = useRef(new Set());
 
   return (
     <div
@@ -204,11 +205,14 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     >
       {placedStickers.map((sticker) => {
         const isSelected = selectedId === sticker.id;
+        const isNew = !animatedRef.current.has(sticker.id);
+        if (isNew) animatedRef.current.add(sticker.id);
         return (
+          /* Outer wrapper: handles positioning + rotation */
           <div
             key={sticker.id}
-            className={`sticker-item ${isSelected ? "" : "sticker-pop"}`}
             style={{
+              position: "absolute",
               left: sticker.x,
               top: sticker.y,
               width: sticker.width,
@@ -223,7 +227,13 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
               setSelectedId(sticker.id);
             }}
           >
-            {getStickerContent(sticker)}
+            {/* Inner div: handles pop-in animation (no transform conflict) */}
+            <div
+              className={`sticker-item ${isNew ? "sticker-pop" : ""}`}
+              style={{ width: "100%", height: "100%" }}
+            >
+              {getStickerContent(sticker)}
+            </div>
 
             {/* Controls when selected */}
             {isSelected && (
