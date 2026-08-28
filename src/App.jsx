@@ -102,18 +102,10 @@ export default function App() {
 
   // Listen for auth changes
   useEffect(() => {
-    let resolved = false;
-
-    const finalize = (u) => {
-      if (resolved) return;
-      resolved = true;
-      setUser(u);
-      setAuthLoading(false);
-    };
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        finalize(session?.user ?? null);
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
       }
     );
 
@@ -121,14 +113,16 @@ export default function App() {
     supabase.auth
       .getSession()
       .then(({ data: { session } }) => {
-        finalize(session?.user ?? null);
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
       })
       .catch(() => {
-        finalize(null);
+        setUser(null);
+        setAuthLoading(false);
       });
 
-    // Safety net — if neither fires, don't leave the user stuck
-    const fallbackTimer = setTimeout(() => finalize(null), 5000);
+    // Safety net — if neither fires (e.g. failed redirect), don't leave the user stuck
+    const fallbackTimer = setTimeout(() => setAuthLoading(false), 5000);
 
     return () => {
       clearTimeout(fallbackTimer);
