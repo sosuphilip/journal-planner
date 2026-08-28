@@ -3,15 +3,20 @@
    Left page: day rows
    Right page: journal + todo card + habits
    ======================================== */
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { supabase } from "./lib/supabase";
+import {
+  loadCloudStore,
+  saveWeek,
+  saveSettings,
+} from "./lib/cloudStore";
 import {
   initStore,
-  saveStore,
   getWeek,
   currentWeekStart,
   todayStr,
 } from "./store";
-import { useAutoSave } from "./hooks/useAutoSave";
+import Auth from "./components/Auth";
 import Header from "./components/Header";
 import DayRow from "./components/DayRow";
 import JournalPanel from "./components/JournalPanel";
@@ -45,12 +50,11 @@ function Doodles() {
         <path d="M12 6 Q12 4 14 3" strokeDasharray="2 1" />
       </svg>
 
-      {/* Spider-hero silhouette — bottom right of right page (original design, not copyrighted) */}
+      {/* Spider-hero silhouette — bottom right of right page */}
       <svg className="absolute no-interact" style={{ bottom: "8%", right: "4%", opacity: 0.2 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6a5a4a" strokeWidth="1" strokeLinecap="round">
         <circle cx="12" cy="10" r="4.5" fill="rgba(106,90,74,0.3)" />
         <circle cx="10" cy="9" r="0.8" fill="white" opacity="0.6" />
         <circle cx="14" cy="9" r="0.8" fill="white" opacity="0.6" />
-        {/* legs */}
         <path d="M7.5 8 Q4 6 2 3" />
         <path d="M8 7 Q5 4 5 1" />
         <path d="M16.5 8 Q20 6 22 3" />
@@ -59,7 +63,6 @@ function Doodles() {
         <path d="M8 13 Q5 16 4 18" />
         <path d="M16.5 12 Q20 14 22 14" />
         <path d="M16 13 Q19 16 20 18" />
-        {/* web line going up */}
         <path d="M12 5.5 L12 1" strokeDasharray="1 2" opacity="0.4" />
       </svg>
 
@@ -73,14 +76,17 @@ function Doodles() {
 
 /* ── Main App ──────────────────────────────── */
 export default function App() {
-  // Initialize data store — start on seed week if fresh, else current week
-  const [initialStore] = useState(() => initStore());
-  const [store, setStore] = useState(initialStore);
-  const [weekStart, setWeekStart] = useState(() => {
-    const keys = Object.keys(initialStore.weeks);
-    return keys.length > 0 ? keys[keys.length - 1] : currentWeekStart();
-  });
+  // Auth state
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Data store
+  const [store, setStore] = useState(null);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [weekStart, setWeekStart] = useState(currentWeekStart());
   const today = todayStr();
+  const storeRef = useRef(store);
+  useEffect(() => { storeRef.current = store; });
 
   // Theme state — persists to localStorage, respects system preference
   const [dark, setDark] = useState(() => {
@@ -94,16 +100,66 @@ export default function App() {
     localStorage.setItem("planner-theme", dark ? "dark" : "light");
   }, [dark]);
 
+  // Listen for auth changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
+      }
+    );
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load data from Supabase when user logs in
+  useEffect(() => {
+    if (!user) {
+      setStore(null);
+      setDataLoading(false);
+      return;
+    }
+
+    setDataLoading(true);
+    loadCloudStore(user.id).then((cloudData) => {
+      // If no weeks exist yet, create defaults
+      if (Object.keys(cloudData.weeks).length === 0) {
+        const defaultStore = initStore();
+        // Save each default week to cloud
+        for (const [weekKey, weekData] of Object.entries(defaultStore.weeks)) {
+          saveWeek(user.id, weekKey, weekData);
+        }
+        saveSettings(user.id, defaultStore);
+        setStore(defaultStore);
+      } else {
+        setStore(cloudData);
+      }
+      setDataLoading(false);
+    });
+  }, [user]);
+
   // Initialize selected day to today if in current week, else 0
-  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    const wd = initialStore.weeks[Object.keys(initialStore.weeks).pop()];
-    if (!wd || !wd.days) return 0;
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  useEffect(() => {
+    if (!store) return;
+    const wd = store.weeks[weekStart];
+    if (!wd || !wd.days) {
+      setSelectedDayIndex(0);
+      return;
+    }
     const idx = wd.days.findIndex((d) => d.date === today);
-    return idx >= 0 ? idx : 0;
-  });
+    setSelectedDayIndex(idx >= 0 ? idx : 0);
+  }, [store, weekStart, today]);
 
   // Auto-advance to today at midnight
   useEffect(() => {
+    if (!store) return;
     const interval = setInterval(() => {
       const now = todayStr();
       if (now !== today) {
@@ -120,14 +176,34 @@ export default function App() {
     return () => clearInterval(interval);
   }, [today, store]);
 
-  // Auto-save entire store to localStorage
-  useAutoSave(store, saveStore, 400);
+  // Debounced cloud save
+  const saveTimerRef = useRef(null);
+  const debouncedCloudSave = useCallback(
+    (newStore) => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        if (!user) return;
+        const currentWeekData = newStore.weeks[weekStart];
+        if (currentWeekData) saveWeek(user.id, weekStart, currentWeekData);
+        saveSettings(user.id, newStore);
+      }, 500);
+    },
+    [user, weekStart]
+  );
 
-  const weekData = getWeek(store, weekStart);
+  // Auto-save to Supabase whenever store changes
+  useEffect(() => {
+    if (store && user) {
+      debouncedCloudSave(store);
+    }
+  }, [store, user, debouncedCloudSave]);
+
+  const weekData = store ? getWeek(store, weekStart) : null;
 
   const updateDay = useCallback(
     (dayIndex, newDay) => {
       setStore((prev) => {
+        if (!prev) return prev;
         const wd = prev.weeks[weekStart];
         if (!wd) return prev;
         const newDays = [...wd.days];
@@ -140,50 +216,91 @@ export default function App() {
 
   const updateTodoCard = useCallback(
     (newTodoCard) => {
-      setStore((prev) => ({ ...prev, todoCard: newTodoCard }));
+      setStore((prev) => (prev ? { ...prev, todoCard: newTodoCard } : prev));
     },
     []
   );
 
   const updateHabits = useCallback(
     (newHabits) => {
-      setStore((prev) => ({ ...prev, habits: newHabits }));
+      setStore((prev) => (prev ? { ...prev, habits: newHabits } : prev));
     },
     []
   );
 
   const updateWater = useCallback(
     (dateKey, liters) => {
-      setStore((prev) => ({
-        ...prev,
-        waterTrack: { ...prev.waterTrack, [dateKey]: liters },
-      }));
+      setStore((prev) =>
+        prev
+          ? { ...prev, waterTrack: { ...prev.waterTrack, [dateKey]: liters } }
+          : prev
+      );
     },
     []
   );
 
   const updatePlacedStickers = useCallback(
     (newPlaced) => {
-      setStore((prev) => ({ ...prev, placedStickers: newPlaced }));
+      setStore((prev) => (prev ? { ...prev, placedStickers: newPlaced } : prev));
     },
     []
   );
 
   const updateCustomStickers = useCallback(
     (newCustom) => {
-      setStore((prev) => ({ ...prev, customStickers: newCustom }));
+      setStore((prev) => (prev ? { ...prev, customStickers: newCustom } : prev));
     },
     []
   );
 
   const clearWeekStickers = useCallback(() => {
-    setStore((prev) => ({ ...prev, placedStickers: [] }));
+    setStore((prev) => (prev ? { ...prev, placedStickers: [] } : prev));
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setStore(null);
+  };
+
+  // Show auth screen if not logged in
+  if (authLoading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+        <span className="font-hand text-lg" style={{ color: "var(--text-muted)" }}>Loading...</span>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
+
+  // Show loading while data loads
+  if (dataLoading || !store) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+        <span className="font-hand text-lg" style={{ color: "var(--text-muted)" }}>Loading your journal...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-screen h-screen overflow-hidden flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
+      {/* Sign out button */}
+      <button
+        onClick={handleSignOut}
+        className="fixed top-3 right-3 z-50 font-hand text-sm py-1 px-3 rounded-md cursor-pointer"
+        style={{
+          background: "var(--clear-btn-bg)",
+          border: "1px solid var(--tray-border)",
+          color: "var(--text-faint)",
+          pointerEvents: "auto",
+        }}
+      >
+        sign out
+      </button>
+
       {/* ── Outer tabs (decorative, non-interactive) ──── */}
-      {/* Left edge: "2026" tab */}
       <div
         className="absolute no-interact"
         style={{
@@ -205,7 +322,6 @@ export default function App() {
         2026
       </div>
 
-      {/* Left edge: current date tab */}
       <div
         className="absolute no-interact"
         style={{
@@ -226,7 +342,6 @@ export default function App() {
         {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
       </div>
 
-      {/* Right edge: 3 stacked dot tabs */}
       <div
         className="absolute flex flex-col gap-1.5 no-interact"
         style={{
@@ -243,10 +358,7 @@ export default function App() {
 
       {/* ── Two-page notebook spread ──── */}
       <div className="relative" style={{ width: "calc(100vw - 80px)", height: "calc(100vh - 40px)", maxWidth: 1400 }}>
-        <div
-          className="grid grid-cols-2 h-full w-full"
-          style={{ gap: 0 }}
-        >
+        <div className="grid grid-cols-2 h-full w-full" style={{ gap: 0 }}>
           {/* ── LEFT PAGE ──── */}
           <div
             className="relative flex flex-col overflow-hidden page-shadow-left"
@@ -257,12 +369,10 @@ export default function App() {
               transition: "background-color 0.3s ease, border-color 0.3s ease",
             }}
           >
-            {/* Header */}
             <div className="px-4 pt-3 pb-1">
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
             </div>
 
-            {/* Day rows */}
             <div className="flex-1 flex flex-col px-2 pb-2 overflow-hidden no-scrollbar">
               {weekData.days.map((day, idx) => (
                 <DayRow
@@ -287,12 +397,9 @@ export default function App() {
               transition: "background-color 0.3s ease",
             }}
           >
-            {/* Decorative doodles */}
             <Doodles />
 
-            {/* Top ~55%: Journal + Todo card */}
             <div className="flex flex-row flex-[0.55] min-h-0 gap-3 px-4 pt-3 pb-1">
-              {/* Journal */}
               <div className="flex-1 min-w-0">
                 <JournalPanel
                   key={weekData.days[selectedDayIndex]?.date}
@@ -301,16 +408,13 @@ export default function App() {
                 />
               </div>
 
-              {/* Todo card */}
               <div className="w-[42%] shrink-0">
                 <TodoCard data={store.todoCard} onUpdate={updateTodoCard} />
               </div>
             </div>
 
-            {/* Divider */}
             <div className="mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
 
-            {/* Bottom ~40%: Habit areas */}
             <div className="flex-[0.42] min-h-0 px-4 pt-2 pb-3 overflow-hidden">
               <HabitAreas
                 habits={store.habits}
@@ -323,7 +427,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── Sticker layer (above both pages, absolute to this container) ──── */}
         <StickerLayer
           placedStickers={store.placedStickers}
           onPlacedChange={updatePlacedStickers}
@@ -331,13 +434,11 @@ export default function App() {
         />
       </div>
 
-      {/* ── Sticker tray ──── */}
       <StickerTray
         customStickers={store.customStickers}
         onCustomStickersChange={updateCustomStickers}
       />
 
-      {/* Clear stickers button */}
       {store.placedStickers.length > 0 && (
         <button
           onClick={clearWeekStickers}

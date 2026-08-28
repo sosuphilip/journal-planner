@@ -61,7 +61,7 @@ export function saveStore(data) {
 
 // ── Default week template (blank) ────────────────────────
 
-const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function blankWeek(weekStartStr) {
   const start = new Date(weekStartStr + "T00:00:00");
