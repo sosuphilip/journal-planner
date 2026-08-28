@@ -3,7 +3,7 @@
    Built-in SVG stickers + custom uploads.
    Lives in outer margin, toggled open/closed.
    ======================================== */
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { uid } from "../store";
 
 /* ── Built-in sticker SVGs (hand-drawn style) ────── */
@@ -102,6 +102,19 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
   const [open, setOpen] = useState(false);
   const [draggingSticker, setDraggingSticker] = useState(null);
   const fileInputRef = useRef(null);
+  const trayRef = useRef(null);
+
+  // Close tray when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e) => {
+      if (trayRef.current && !trayRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
 
   const handleUpload = (e) => {
     const file = e.target.files?.[0];
@@ -165,6 +178,7 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
       {/* Tray panel */}
       {open && (
         <div
+          ref={trayRef}
           className="sticker-tray fixed bottom-16 right-4 z-50 rounded-xl p-3 shadow-xl tray-panel-enter"
           style={{
             background: "var(--tray-bg)",
