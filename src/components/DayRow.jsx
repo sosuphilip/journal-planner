@@ -152,8 +152,8 @@ export default function DayRow({ day, index, isToday, isSelected, onSelect, onDa
           />
         )}
 
-        {/* Notes field — shown on all days except Sunday */}
-        {showNotes && !isFri && !isSat && (
+        {/* Notes field — shown on all days except Sunday and Saturday */}
+        {showNotes && !isSat && (
           <EditableText
             value={specialNote}
             onChange={handleSpecialNote}
