@@ -9,6 +9,11 @@ import { BUILTIN_STICKERS } from "./StickerTray";
 export default function StickerLayer({ placedStickers, onPlacedChange, customStickers }) {
   const [selectedId, setSelectedId] = useState(null);
   const dragRef = useRef({});
+  // Keep a ref to the latest placedStickers so drag handlers always see current data
+  const stickersRef = useRef(placedStickers);
+  useEffect(() => {
+    stickersRef.current = placedStickers;
+  }, [placedStickers]);
 
   const getStickerContent = (sticker) => {
     if (sticker.isCustom) {
@@ -32,8 +37,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
 
   const handleMouseDown = (e, id) => {
     e.stopPropagation();
+    e.preventDefault(); // prevent text selection while dragging
     setSelectedId(id);
-    const sticker = placedStickers.find((s) => s.id === id);
+    const sticker = stickersRef.current.find((s) => s.id === id);
     dragRef.current = {
       id,
       startX: e.clientX,
@@ -45,8 +51,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const handleMouseMove = (e) => {
       const dx = e.clientX - dragRef.current.startX;
       const dy = e.clientY - dragRef.current.startY;
+      const current = stickersRef.current;
       onPlacedChange(
-        placedStickers.map((s) =>
+        current.map((s) =>
           s.id === id ? { ...s, x: dragRef.current.origX + dx, y: dragRef.current.origY + dy } : s
         )
       );
@@ -63,7 +70,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
 
   const handleResizeMouseDown = (e, id) => {
     e.stopPropagation();
-    const sticker = placedStickers.find((s) => s.id === id);
+    e.preventDefault();
+    const sticker = stickersRef.current.find((s) => s.id === id);
     const startX = e.clientX;
     const startY = e.clientY;
     const origW = sticker.width;
@@ -74,8 +82,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
       const scale = 1 + dx / 200;
       const newW = Math.max(20, origW * scale);
       const newH = Math.max(20, origH * scale);
+      const current = stickersRef.current;
       onPlacedChange(
-        placedStickers.map((s) =>
+        current.map((s) =>
           s.id === id ? { ...s, width: newW, height: newH } : s
         )
       );
@@ -92,7 +101,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
 
   const handleRotateMouseDown = (e, id) => {
     e.stopPropagation();
-    const sticker = placedStickers.find((s) => s.id === id);
+    e.preventDefault();
+    const sticker = stickersRef.current.find((s) => s.id === id);
     const centerX = sticker.x + sticker.width / 2;
     const centerY = sticker.y + sticker.height / 2;
     const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
@@ -101,8 +111,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const handleMouseMove = (e) => {
       const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
       const delta = ((angle - startAngle) * 180) / Math.PI;
+      const current = stickersRef.current;
       onPlacedChange(
-        placedStickers.map((s) =>
+        current.map((s) =>
           s.id === id ? { ...s, rotation: origRotation + delta } : s
         )
       );
@@ -118,7 +129,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   };
 
   const handleDelete = (id) => {
-    onPlacedChange(placedStickers.filter((s) => s.id !== id));
+    onPlacedChange(stickersRef.current.filter((s) => s.id !== id));
     setSelectedId(null);
   };
 
@@ -170,9 +181,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
         rotation: 0,
       };
 
-      onPlacedChange([...placedStickers, newSticker]);
+      onPlacedChange([...stickersRef.current, newSticker]);
     },
-    [placedStickers, onPlacedChange]
+    [onPlacedChange]
   );
 
   const handleDragOver = (e) => {
@@ -183,7 +194,10 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   return (
     <div
       className="sticker-layer"
-      style={{ pointerEvents: isDragActive ? "auto" : undefined }}
+      style={{
+        pointerEvents: "auto",
+        userSelect: "none",
+      }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onClick={() => setSelectedId(null)}
@@ -201,6 +215,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
               height: sticker.height,
               transform: `rotate(${sticker.rotation || 0}deg)`,
               zIndex: isSelected ? 100 : 50,
+              userSelect: "none",
             }}
             onMouseDown={(e) => handleMouseDown(e, sticker.id)}
             onClick={(e) => {
@@ -221,7 +236,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                     handleDelete(sticker.id);
                   }}
                   className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-muted-pink text-white text-xs flex items-center justify-center cursor-pointer"
-                  style={{ fontSize: "9px", lineHeight: 1, pointerEvents: "auto" }}
+                  style={{ fontSize: "9px", lineHeight: 1, pointerEvents: "auto", userSelect: "none" }}
                   title="Delete sticker"
                 >
                   ×
@@ -231,7 +246,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                 <div
                   onMouseDown={(e) => handleRotateMouseDown(e, sticker.id)}
                   className="absolute -top-5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-dusty-blue cursor-grab"
-                  style={{ pointerEvents: "auto" }}
+                  style={{ pointerEvents: "auto", userSelect: "none" }}
                   title="Rotate"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
@@ -244,7 +259,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                 <div
                   onMouseDown={(e) => handleResizeMouseDown(e, sticker.id)}
                   className="absolute -bottom-2 -right-2 w-3 h-3 rounded-full bg-sage cursor-se-resize"
-                  style={{ pointerEvents: "auto" }}
+                  style={{ pointerEvents: "auto", userSelect: "none" }}
                   title="Resize"
                 />
               </>
