@@ -271,9 +271,16 @@ export default function App() {
 
   const updatePlacedStickers = useCallback(
     (newPlaced) => {
-      setStore((prev) => (prev ? { ...prev, placedStickers: newPlaced } : prev));
+      setStore((prev) => {
+        if (!prev) return prev;
+        const wd = prev.weeks[weekStart];
+        if (!wd) return prev;
+        const newDays = [...wd.days];
+        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], placedStickers: newPlaced };
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
+      });
     },
-    []
+    [weekStart, selectedDayIndex]
   );
 
   const updateCustomStickers = useCallback(
@@ -284,8 +291,8 @@ export default function App() {
   );
 
   const clearWeekStickers = useCallback(() => {
-    setStore((prev) => (prev ? { ...prev, placedStickers: [] } : prev));
-  }, []);
+    updatePlacedStickers([]);
+  }, [updatePlacedStickers]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -465,7 +472,7 @@ export default function App() {
         </div>
 
         <StickerLayer
-          placedStickers={store.placedStickers}
+          placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
           onPlacedChange={updatePlacedStickers}
           customStickers={store.customStickers}
         />
@@ -476,7 +483,7 @@ export default function App() {
         onCustomStickersChange={updateCustomStickers}
       />
 
-      {store.placedStickers.length > 0 && (
+      {(weekData.days[selectedDayIndex]?.placedStickers || []).length > 0 && (
         <button
           onClick={clearWeekStickers}
           className="fixed bottom-16 right-16 z-50 font-hand text-sm py-1 px-3 rounded-md"

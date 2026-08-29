@@ -78,6 +78,7 @@ function blankWeek(weekStartStr) {
       specialNote: "",
       dateCircled: false,
       dateSticker: null,
+      placedStickers: [],
     };
   });
 
