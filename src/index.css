@@ -424,3 +424,73 @@ textarea:focus, input[type="text"]:focus {
     max-width: none;
   }
 }
+
+/* ========================================
+   NOTEBOOK GRID — side-by-side on desktop, stacked on mobile
+   ======================================== */
+.notebook-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+/* Mobile: single column, full width pages */
+@media (max-width: 768px) {
+  .notebook-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-hidden {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   MOBILE BOTTOM NAV
+   ======================================== */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    background: var(--tray-bg);
+    border-top: 1px solid var(--tray-border);
+    padding: 6px 0;
+    justify-content: center;
+    gap: 2rem;
+    pointer-events: auto;
+  }
+
+  .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-hand);
+    font-size: 12px;
+    color: var(--text-faint);
+    padding: 4px 16px;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .mobile-nav-btn.active {
+    color: var(--color-sage);
+    background: var(--selected-bg);
+  }
+
+  /* Give room for bottom nav */
+  .notebook-spread {
+    height: calc(100vh - 60px) !important;
+  }
+}

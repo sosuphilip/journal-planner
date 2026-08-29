@@ -175,6 +175,9 @@ export default function App() {
       });
   }, [user]);
 
+  // Mobile view toggle: "days" or "journal"
+  const [mobileView, setMobileView] = useState("days");
+
   // Initialize selected day to today if in current week, else 0 (only on first load)
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const initializedDayRef = useRef(false);
@@ -406,10 +409,10 @@ export default function App() {
 
       {/* ── Two-page notebook spread ──── */}
       <div className="notebook-spread relative">
-        <div className="grid grid-cols-2 h-full w-full" style={{ gap: 0 }}>
+        <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
-            className="relative flex flex-col overflow-hidden page-shadow-left"
+            className={`relative flex flex-col overflow-hidden page-shadow-left ${mobileView !== "days" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "12px 0 0 12px",
@@ -429,7 +432,11 @@ export default function App() {
                   index={idx}
                   isToday={day.date === today}
                   isSelected={idx === selectedDayIndex}
-                  onSelect={() => setSelectedDayIndex(idx)}
+                  onSelect={() => {
+                    setSelectedDayIndex(idx);
+                    // On mobile, auto-switch to journal when tapping a day
+                    if (window.innerWidth <= 768) setMobileView("journal");
+                  }}
                   onDayUpdate={(newDay) => updateDay(idx, newDay)}
                 />
               ))}
@@ -438,7 +445,7 @@ export default function App() {
 
           {/* ── RIGHT PAGE ──── */}
           <div
-            className="relative flex flex-col overflow-hidden dot-grid-bg page-shadow-right"
+            className={`relative flex flex-col overflow-auto dot-grid-bg page-shadow-right ${mobileView !== "journal" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "0 12px 12px 0",
@@ -447,7 +454,7 @@ export default function App() {
           >
             <Doodles />
 
-            <div className="flex flex-row flex-[0.55] min-h-0 gap-3 px-4 pt-3 pb-1">
+            <div className="flex flex-col flex-[0.55] min-h-0 gap-3 px-4 pt-3 pb-1 md:flex-row">
               <div className="flex-1 min-w-0">
                 <JournalPanel
                   key={weekData.days[selectedDayIndex]?.date}
@@ -456,7 +463,7 @@ export default function App() {
                 />
               </div>
 
-              <div className="w-[42%] shrink-0">
+              <div className="w-full md:w-[42%] shrink-0">
                 <TodoCard data={store.todoCard} onUpdate={updateTodoCard} />
               </div>
             </div>
@@ -480,6 +487,24 @@ export default function App() {
           onPlacedChange={updatePlacedStickers}
           customStickers={store.customStickers}
         />
+      </div>
+
+      {/* ── Mobile bottom nav (only visible on small screens) ──── */}
+      <div className="mobile-nav">
+        <button
+          onClick={() => setMobileView("days")}
+          className={`mobile-nav-btn ${mobileView === "days" ? "active" : ""}`}
+        >
+          <span className="text-lg">📋</span>
+          <span>Days</span>
+        </button>
+        <button
+          onClick={() => setMobileView("journal")}
+          className={`mobile-nav-btn ${mobileView === "journal" ? "active" : ""}`}
+        >
+          <span className="text-lg">📓</span>
+          <span>Journal</span>
+        </button>
       </div>
 
       <StickerTray
