@@ -177,6 +177,7 @@ export default function App() {
 
   // Mobile view toggle: "days" or "journal"
   const [mobileView, setMobileView] = useState("days");
+  const isMobileLandscape = typeof window !== "undefined" && window.innerWidth > window.innerHeight && window.innerHeight <= 500;
 
   // Initialize selected day to today if in current week, else 0 (only on first load)
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
@@ -408,12 +409,15 @@ export default function App() {
         <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
-            className={`relative flex flex-col page-shadow-left page-scroll ${mobileView !== "days" ? "mobile-hidden" : ""}`}
+            className={`relative flex flex-col page-shadow-left ${mobileView !== "days" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "12px 0 0 12px",
               borderRight: "1px solid var(--page-border)",
               transition: "background-color 0.3s ease, border-color 0.3s ease",
+              minHeight: 0,
+              overflow: isMobileLandscape ? "auto" : "hidden",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             <div className="px-4 pt-3 pb-1">
@@ -441,11 +445,14 @@ export default function App() {
 
           {/* ── RIGHT PAGE ──── */}
           <div
-            className={`relative flex flex-col dot-grid-bg page-shadow-right page-scroll ${mobileView !== "journal" ? "mobile-hidden" : ""}`}
+            className={`relative flex flex-col dot-grid-bg page-shadow-right ${mobileView !== "journal" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
+              minHeight: 0,
+              overflow: isMobileLandscape ? "auto" : "hidden",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             <Doodles />
