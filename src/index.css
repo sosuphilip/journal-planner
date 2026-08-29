@@ -505,7 +505,7 @@ textarea:focus, input[type="text"]:focus {
   }
 }
 
-/* Mobile landscape — no bottom nav, use full height */
+/* Mobile landscape — no bottom nav, use full height, scrollable pages */
 @media (max-width: 768px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
@@ -521,5 +521,10 @@ textarea:focus, input[type="text"]:focus {
 
   .mobile-hidden {
     display: flex !important;
+  }
+
+  /* Allow both pages to scroll vertically */
+  .page-scroll {
+    overflow-y: auto !important;
   }
 }

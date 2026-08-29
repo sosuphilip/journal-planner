@@ -408,7 +408,7 @@ export default function App() {
         <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
-            className={`relative flex flex-col overflow-hidden page-shadow-left ${mobileView !== "days" ? "mobile-hidden" : ""}`}
+            className={`relative flex flex-col overflow-hidden page-shadow-left page-scroll ${mobileView !== "days" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "12px 0 0 12px",
@@ -441,7 +441,7 @@ export default function App() {
 
           {/* ── RIGHT PAGE ──── */}
           <div
-            className={`relative flex flex-col overflow-auto dot-grid-bg page-shadow-right ${mobileView !== "journal" ? "mobile-hidden" : ""}`}
+            className={`relative flex flex-col overflow-auto dot-grid-bg page-shadow-right page-scroll ${mobileView !== "journal" ? "mobile-hidden" : ""}`}
             style={{
               background: "var(--page)",
               borderRadius: "0 12px 12px 0",
