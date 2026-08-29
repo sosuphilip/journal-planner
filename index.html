@@ -11,10 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
     <script>
-      // Set --vh before CSS evaluates so height is correct on first paint
+      // Set --vh and dark mode BEFORE CSS evaluates so theme is correct on first paint
       (function() {
         var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         document.documentElement.style.setProperty('--vh', vh + 'px');
+        var saved = localStorage.getItem('planner-theme');
+        var isDark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) document.documentElement.classList.add('dark');
       })();
     </script>
   </head>
