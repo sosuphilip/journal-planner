@@ -19,9 +19,6 @@
         var isDark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (isDark) {
           document.documentElement.classList.add('dark');
-          // Set status bar to dark at launch (iOS reads this once)
-          var m = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-          if (m) m.content = 'black';
           var t = document.getElementById('theme-color');
           if (t) t.content = '#1c1815';
         }

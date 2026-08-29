@@ -104,9 +104,7 @@ export default function App() {
     // Update theme-color meta tag for PWA status bar
     const meta = document.getElementById("theme-color");
     if (meta) meta.content = dark ? "#1c1815" : "#e8e2d6";
-    // Update apple status bar style
-    const appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-    if (appleMeta) appleMeta.content = dark ? "black" : "black-translucent";
+
     // Update color-scheme for browser UI (scrollbars, form controls)
     document.documentElement.style.colorScheme = dark ? "dark" : "light";
     // Force full browser repaint via double rAF
