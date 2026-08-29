@@ -52,8 +52,13 @@ window.addEventListener('orientationchange', () => {
 
   document.addEventListener('touchend', (e) => {
     if (e.touches.length >= 2) return;
-    // Smooth snap to 1x if close
-    if (scale > 0.85 && scale < 1.15) {
+    // Zoom out always snaps back to 1x — only zoom in persists
+    if (scale < 1) {
+      scale = 1;
+      document.body.style.transform = '';
+      document.body.style.transformOrigin = '';
+    } else if (scale < 1.05) {
+      // Close to 1x, snap clean
       scale = 1;
       document.body.style.transform = '';
       document.body.style.transformOrigin = '';
