@@ -138,7 +138,7 @@ function HabitsTable({ habits, onHabitsChange }) {
       {habits.map((habit) => (
         <div
           key={habit.id}
-          className="flex items-center gap-0 group"
+className="relative flex items-center gap-0 group"
           onMouseEnter={() => setHoveredRow(habit.id)}
           onMouseLeave={() => setHoveredRow(null)}
         >
@@ -175,17 +175,15 @@ function HabitsTable({ habits, onHabitsChange }) {
             </button>
           ))}
 
-          {/* Delete */}
-          {hoveredRow === habit.id && (
-            <button
-              onClick={() => removeHabit(habit.id)}
-              className="w-5 text-muted-pink text-xs bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100"
-              style={{ pointerEvents: "auto" }}
-              title="Remove habit"
-            >
-              ×
-            </button>
-          )}
+          {/* Delete — absolute so it doesn't push layout */}
+          <button
+            onClick={() => removeHabit(habit.id)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-5 text-muted-pink text-xs bg-transparent border-none cursor-pointer transition-opacity"
+            style={{ pointerEvents: "auto", opacity: hoveredRow === habit.id ? 0.6 : 0 }}
+            title="Remove habit"
+          >
+            ×
+          </button>
         </div>
       ))}
 
