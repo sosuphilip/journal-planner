@@ -37,6 +37,15 @@ window.addEventListener('orientationchange', () => {
   }
 
   document.addEventListener('touchstart', (e) => {
+    // Any single-finger touch while zoomed: reset to 1x
+    if (e.touches.length === 1 && scale !== 1) {
+      document.body.style.transition = 'transform 0.2s ease-out';
+      scale = 1;
+      document.body.style.transform = '';
+      document.body.style.transformOrigin = '';
+      setTimeout(() => { document.body.style.transition = ''; }, 250);
+      return;
+    }
     if (e.touches.length !== 2) return;
     if (isInputFocused()) return;
     e.preventDefault();
