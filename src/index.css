@@ -470,27 +470,13 @@ textarea:focus, input[type="text"]:focus {
   height: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
 .page-scroll {
   overflow: hidden;
   min-height: 0;
-}
-
-@media (max-height: 500px) and (orientation: landscape) {
-  .page-scroll {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-@media (max-height: 500px) and (orientation: landscape) {
-  .notebook-spread {
-    width: calc(100% - 24px);
-    height: calc(var(--vh) - 16px);
-    max-width: none;
-  }
 }
 
 
@@ -609,21 +595,19 @@ textarea:focus, input[type="text"]:focus {
 
   /* Give room for bottom nav */
   .notebook-spread {
-    height: calc(var(--vh) - 60px) !important;
+    height: calc(100% - 60px) !important;
   }
 }
 
-/* Mobile landscape — no bottom nav, use full height.
-   IMPORTANT: this must come AFTER the (max-width:768px) rule
-   so the !important height wins on narrow+landscape screens. */
+/* Mobile landscape — no bottom nav, show both pages side by side */
 @media (max-height: 500px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
   }
 
   .notebook-spread {
-    height: calc(var(--vh) - 4px) !important;
-    width: calc(100% - 4px) !important;
+    height: 100% !important;
+    width: 100% !important;
   }
 
   .notebook-grid {
