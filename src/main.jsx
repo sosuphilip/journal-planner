@@ -46,22 +46,20 @@ window.addEventListener('orientationchange', () => {
     const d = dist(e.touches[0], e.touches[1]);
     const newScale = Math.min(Math.max(startScale * (d / lastDist), 0.5), 4);
     scale = newScale;
+    document.body.style.transition = 'none';
     document.body.style.transformOrigin = `${originX}px ${originY}px`;
     document.body.style.transform = `scale(${scale})`;
   }, { passive: false });
 
   document.addEventListener('touchend', (e) => {
     if (e.touches.length >= 2) return;
-    // Zoom out always snaps back to 1x — only zoom in persists
-    if (scale < 1) {
+    // Zoom out always snaps back to 1x with smooth animation
+    if (scale < 1 || scale < 1.05) {
+      document.body.style.transition = 'transform 0.3s ease-out';
       scale = 1;
       document.body.style.transform = '';
       document.body.style.transformOrigin = '';
-    } else if (scale < 1.05) {
-      // Close to 1x, snap clean
-      scale = 1;
-      document.body.style.transform = '';
-      document.body.style.transformOrigin = '';
+      setTimeout(() => { document.body.style.transition = ''; }, 350);
     }
   });
 })();
