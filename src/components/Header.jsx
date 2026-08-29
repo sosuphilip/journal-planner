@@ -64,7 +64,7 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
       {/* Dark mode toggle */}
       <button
         onClick={onToggleDark}
-        className="absolute right-0 top-0 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
+        className="absolute right-0 top-0 w-9 h-9 md:w-7 md:h-7 rounded-full flex items-center justify-center cursor-pointer"
         style={{
           background: dark ? "rgba(160,144,128,0.25)" : "rgba(155,180,201,0.2)",
           border: "1px solid var(--border-strong)",
@@ -73,7 +73,7 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
         }}
         title={dark ? "Switch to light mode" : "Switch to dark mode"}
       >
-        <span style={{ fontSize: "14px" }}>{dark ? "☀️" : "🌙"}</span>
+        <span style={{ fontSize: "16px" }}>{dark ? "☀️" : "🌙"}</span>
       </button>
 
       {/* Thin divider */}
