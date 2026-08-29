@@ -115,11 +115,6 @@ html, body, #root {
   overscroll-behavior: none;
 }
 
-/* DEBUG: show boundaries of html, body, #root */
-html { outline: 2px solid cyan; outline-offset: -2px; }
-body { outline: 2px solid lime; outline-offset: -2px; }
-#root { outline: 2px solid yellow; outline-offset: -2px; }
-
 /* Prevent iOS auto-scroll to focused input */
 input, textarea, [contenteditable] {
   caret-color: var(--text);
@@ -472,7 +467,7 @@ textarea:focus, input[type="text"]:focus {
    ======================================== */
 .notebook-spread {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
