@@ -40,13 +40,17 @@ window.addEventListener('orientationchange', () => {
   }
 
   function smoothReset() {
-    if (scale === 1) return;
-    document.body.style.transition = 'transform 0.25s ease-out';
+    if (scale === 1 && !document.body.style.transform) return;
     scale = 1;
     pinching = false;
+    document.body.style.transition = 'transform 0.2s ease-out';
     document.body.style.transform = '';
     document.body.style.transformOrigin = '';
-    setTimeout(() => { document.body.style.transition = ''; }, 300);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.body.style.transition = '';
+      });
+    });
   }
 
   document.addEventListener('touchstart', (e) => {
@@ -75,9 +79,11 @@ window.addEventListener('orientationchange', () => {
   }, { passive: false });
 
   document.addEventListener('touchend', (e) => {
-    if (e.touches.length < 2) pinching = false;
-    // Snap back if zoomed out below 1x or very close to 1x
-    if (scale <= 1.05) smoothReset();
+    if (e.touches.length < 2) {
+      pinching = false;
+      // Always reset after any touch ends — zoom only persists during active pinch
+      if (scale !== 1) smoothReset();
+    }
   });
 
   // Hard reset on any input interaction
