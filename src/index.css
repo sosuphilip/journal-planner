@@ -484,12 +484,12 @@ textarea:focus, input[type="text"]:focus {
 /* App shell — safe area padding goes here */
 .app-shell {
   width: 100%;
-  height: 100%;
+  height: var(--vh, 100%);
 }
 
 .notebook-spread {
   width: 100%;
-  height: 100%;
+  height: var(--vh, 100%);
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
