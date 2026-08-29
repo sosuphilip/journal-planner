@@ -104,10 +104,12 @@ export default function App() {
     // Update theme-color meta tag for PWA status bar
     const meta = document.getElementById("theme-color");
     if (meta) meta.content = dark ? "#1c1815" : "#e8e2d6";
-    // Force browser repaint — fixes Chrome mobile not repainting after class toggle
-    document.body.style.display = 'none';
-    document.body.offsetHeight; // trigger reflow
-    document.body.style.display = '';
+    // Force full browser repaint via double rAF
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.documentElement.offsetHeight;
+      });
+    });
   }, [dark]);
 
   // Listen for auth changes
