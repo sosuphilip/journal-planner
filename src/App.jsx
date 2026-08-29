@@ -174,17 +174,20 @@ export default function App() {
       });
   }, [user]);
 
-  // Initialize selected day to today if in current week, else 0
+  // Initialize selected day to today if in current week, else 0 (only on first load)
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const initializedDayRef = useRef(false);
   useEffect(() => {
-    if (!store) return;
+    if (!store || initializedDayRef.current) return;
     const wd = store.weeks[weekStart];
     if (!wd || !wd.days) {
       setSelectedDayIndex(0);
+      initializedDayRef.current = true;
       return;
     }
     const idx = wd.days.findIndex((d) => d.date === today);
     setSelectedDayIndex(idx >= 0 ? idx : 0);
+    initializedDayRef.current = true;
   }, [store, weekStart, today]);
 
   // Auto-advance to today at midnight
