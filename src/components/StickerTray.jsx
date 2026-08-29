@@ -180,7 +180,7 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
         }}
         title="Sticker tray"
       >
-        <span className="text-lg">✿</span>
+        <span className="text-lg">⭐</span>
       </button>
 
       {/* Tray panel */}
