@@ -31,8 +31,14 @@ window.addEventListener('orientationchange', () => {
     return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   }
 
+  function isInputFocused() {
+    const tag = document.activeElement?.tagName;
+    return tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.contentEditable === 'true';
+  }
+
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 2) return;
+    if (isInputFocused()) return;
     e.preventDefault();
     lastDist = dist(e.touches[0], e.touches[1]);
     startScale = scale;
@@ -42,6 +48,7 @@ window.addEventListener('orientationchange', () => {
 
   document.addEventListener('touchmove', (e) => {
     if (e.touches.length !== 2) return;
+    if (isInputFocused()) return;
     e.preventDefault();
     const d = dist(e.touches[0], e.touches[1]);
     const newScale = Math.min(Math.max(startScale * (d / lastDist), 0.5), 4);
