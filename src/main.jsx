@@ -65,6 +65,9 @@ window.addEventListener('orientationchange', () => {
 
   document.addEventListener('touchend', clearZoom);
   document.addEventListener('touchcancel', clearZoom);
+
+  // Clear zoom on viewport resize (keyboard open/close)
+  window.addEventListener('resize', clearZoom);
 })();
 
 createRoot(document.getElementById('root')).render(
