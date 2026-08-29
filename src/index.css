@@ -362,3 +362,65 @@ textarea:focus, input[type="text"]:focus {
 .dark .page-shadow-right {
   box-shadow: inset 8px 0 20px -10px rgba(0,0,0,0.25);
 }
+
+/* ========================================
+   MOBILE LANDSCAPE (phones in horizontal)
+   ======================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  html, body, #root {
+    font-size: 14px;
+  }
+
+  .day-row {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    min-height: 1.6rem !important;
+  }
+
+  .habit-cell {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .water-drop {
+    width: 10px;
+    height: 13px;
+  }
+
+  .sticker-tray {
+    transform: scale(0.85);
+  }
+}
+
+/* Small phones portrait */
+@media (max-width: 500px) and (orientation: portrait) {
+  html, body, #root {
+    font-size: 15px;
+    overflow: auto;
+  }
+}
+
+/* ========================================
+   NOTEBOOK SPREAD CONTAINER
+   ======================================== */
+.notebook-spread {
+  width: calc(100vw - 80px);
+  height: calc(100vh - 40px);
+  max-width: 1400px;
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .notebook-spread {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 16px);
+    max-width: none;
+  }
+}
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .notebook-spread {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 16px);
+    max-width: none;
+  }
+}

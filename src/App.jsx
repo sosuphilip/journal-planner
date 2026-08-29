@@ -404,7 +404,7 @@ export default function App() {
       </div>
 
       {/* ── Two-page notebook spread ──── */}
-      <div className="relative" style={{ width: "calc(100vw - 80px)", height: "calc(100vh - 40px)", maxWidth: 1400 }}>
+      <div className="notebook-spread relative">
         <div className="grid grid-cols-2 h-full w-full" style={{ gap: 0 }}>
           {/* ── LEFT PAGE ──── */}
           <div
