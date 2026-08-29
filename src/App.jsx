@@ -487,14 +487,14 @@ export default function App() {
                   onWaterChange={updateWater}
                 />
               </div>
-            </div>
 
-            <StickerLayer
-              placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
-              onPlacedChange={updatePlacedStickers}
-              customStickers={store.customStickers}
-              containerRef={rightPageRef}
-            />
+              <StickerLayer
+                placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
+                onPlacedChange={updatePlacedStickers}
+                customStickers={store.customStickers}
+                containerRef={rightPageRef}
+              />
+            </div>
           </div>
         </div>
       </div>
