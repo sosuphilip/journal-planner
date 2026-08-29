@@ -18,88 +18,71 @@ window.addEventListener('orientationchange', () => {
   setTimeout(updateVH, 100);
 });
 
-// ── Pinch-to-zoom (centers on pinch, feels native) ──────────
+// ── Pinch-to-zoom (centers on pinch, simple rules) ──────────
 (function initPinchZoom() {
-  const el = document.documentElement;
   let scale = 1;
   let lastDist = 0;
   let startScale = 1;
   let originX = 0;
   let originY = 0;
+  let pinching = false;
 
   function dist(a, b) {
     return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   }
 
-  function isInputFocused() {
-    const tag = document.activeElement?.tagName;
-    return tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.contentEditable === 'true';
+  function hardReset() {
+    scale = 1;
+    pinching = false;
+    document.body.style.transition = '';
+    document.body.style.transform = '';
+    document.body.style.transformOrigin = '';
+  }
+
+  function smoothReset() {
+    if (scale === 1) return;
+    document.body.style.transition = 'transform 0.25s ease-out';
+    scale = 1;
+    pinching = false;
+    document.body.style.transform = '';
+    document.body.style.transformOrigin = '';
+    setTimeout(() => { document.body.style.transition = ''; }, 300);
   }
 
   document.addEventListener('touchstart', (e) => {
-    // Any single-finger touch while zoomed: reset to 1x
-    if (e.touches.length === 1 && scale !== 1) {
-      document.body.style.transition = 'transform 0.2s ease-out';
-      scale = 1;
-      document.body.style.transform = '';
-      document.body.style.transformOrigin = '';
-      setTimeout(() => { document.body.style.transition = ''; }, 250);
-      return;
+    if (e.touches.length === 2) {
+      // Start pinch
+      e.preventDefault();
+      pinching = true;
+      lastDist = dist(e.touches[0], e.touches[1]);
+      startScale = scale;
+      originX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      originY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    } else if (e.touches.length === 1 && !pinching) {
+      // Single finger tap — always reset if zoomed
+      if (scale !== 1) smoothReset();
     }
-    if (e.touches.length !== 2) return;
-    if (isInputFocused()) return;
-    e.preventDefault();
-    lastDist = dist(e.touches[0], e.touches[1]);
-    startScale = scale;
-    originX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-    originY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
   }, { passive: false });
 
   document.addEventListener('touchmove', (e) => {
-    if (e.touches.length !== 2) return;
-    if (isInputFocused()) return;
+    if (e.touches.length !== 2 || !pinching) return;
     e.preventDefault();
     const d = dist(e.touches[0], e.touches[1]);
-    const newScale = Math.min(Math.max(startScale * (d / lastDist), 0.5), 4);
-    scale = newScale;
+    scale = Math.min(Math.max(startScale * (d / lastDist), 0.5), 4);
     document.body.style.transition = 'none';
     document.body.style.transformOrigin = `${originX}px ${originY}px`;
     document.body.style.transform = `scale(${scale})`;
   }, { passive: false });
 
   document.addEventListener('touchend', (e) => {
-    if (e.touches.length >= 2) return;
-    // Zoom out always snaps back to 1x with smooth animation
-    if (scale < 1 || scale < 1.05) {
-      document.body.style.transition = 'transform 0.3s ease-out';
-      scale = 1;
-      document.body.style.transform = '';
-      document.body.style.transformOrigin = '';
-      setTimeout(() => { document.body.style.transition = ''; }, 350);
-    }
+    if (e.touches.length < 2) pinching = false;
+    // Snap back if zoomed out below 1x or very close to 1x
+    if (scale <= 1.05) smoothReset();
   });
 
-  // Reset zoom when any input/textarea is focused or blurred
-  function resetZoom() {
-    if (scale !== 1) {
-      document.body.style.transition = 'transform 0.2s ease-out';
-      scale = 1;
-      document.body.style.transform = '';
-      document.body.style.transformOrigin = '';
-      setTimeout(() => { document.body.style.transition = ''; }, 250);
-    }
-  }
-  document.addEventListener('focusin', resetZoom);
-  document.addEventListener('focusout', resetZoom);
-
-  // Also reset when keyboard hides (viewport resize after blur)
-  let lastHeight = window.innerHeight;
-  window.addEventListener('resize', () => {
-    if (window.innerHeight > lastHeight && scale !== 1) {
-      resetZoom();
-    }
-    lastHeight = window.innerHeight;
-  });
+  // Hard reset on any input interaction
+  document.addEventListener('focusin', hardReset);
+  document.addEventListener('focusout', () => setTimeout(hardReset, 100));
 })();
 
 createRoot(document.getElementById('root')).render(
