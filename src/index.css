@@ -409,12 +409,12 @@ textarea:focus, input[type="text"]:focus {
   max-width: 1400px;
 }
 
-/* Pages: hidden overflow on desktop, scrollable on mobile */
+/* Pages: hidden overflow on desktop, scrollable on mobile landscape */
 .page-scroll {
   overflow: hidden;
 }
 
-@media (max-width: 768px) and (orientation: landscape) {
+@media (max-height: 500px) and (orientation: landscape) {
   .page-scroll {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -518,7 +518,7 @@ textarea:focus, input[type="text"]:focus {
 }
 
 /* Mobile landscape — no bottom nav, use full height, scrollable pages */
-@media (max-width: 768px) and (orientation: landscape) {
+@media (max-height: 500px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
   }
