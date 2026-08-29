@@ -85,13 +85,13 @@ export default function JournalPanel({ day, onDayUpdate }) {
 
       {/* Mood / calorie line */}
       <div className="mt-1.5 flex items-center gap-1">
-        <span className="font-hand text-sm" style={{ color: "#6a9ec0" }}>✦</span>
+        <span className="font-hand text-sm" style={{ color: "var(--color-accent-blue)" }}>✦</span>
         <input
           type="text"
           value={moodText}
           onChange={handleMoodChange}
           className="font-hand text-sm flex-1"
-          style={{ color: "#6a9ec0", fontStyle: "italic" }}
+          style={{ color: "var(--color-accent-blue)", fontStyle: "italic" }}
           placeholder="mood or calorie note..."
         />
       </div>
