@@ -110,6 +110,8 @@ html, body, #root {
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 17px;
+  position: fixed;
+  inset: 0;
 }
 
 /* Dark mode: stronger page shadows for depth */
