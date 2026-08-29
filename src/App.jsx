@@ -27,63 +27,6 @@ import HabitAreas from "./components/HabitAreas";
 import StickerTray from "./components/StickerTray";
 import StickerLayer from "./components/StickerLayer";
 
-/* ── Debug overlay (temporary) ────── */
-function DebugOverlay() {
-  const [info, setInfo] = React.useState({});
-  React.useEffect(() => {
-    const update = () => {
-      const spread = document.querySelector('.notebook-spread');
-      const grid = document.querySelector('.notebook-grid');
-      const spreadRect = spread?.getBoundingClientRect();
-      const gridRect = grid?.getBoundingClientRect();
-      setInfo({
-        innerW: window.innerWidth,
-        innerH: window.innerHeight,
-        vvW: window.visualViewport?.width,
-        vvH: window.visualViewport?.height,
-        vvOffTop: window.visualViewport?.offsetTop,
-        cssVarVH: getComputedStyle(document.documentElement).getPropertyValue('--vh'),
-        screenW: screen.width,
-        screenH: screen.height,
-        dpr: window.devicePixelRatio,
-        orientation: window.innerWidth > window.innerHeight ? 'landscape' : 'portrait',
-        spreadW: spreadRect?.width?.toFixed(0),
-        spreadH: spreadRect?.height?.toFixed(0),
-        spreadTop: spreadRect?.top?.toFixed(0),
-        spreadBottom: spreadRect?.bottom?.toFixed(0),
-        gridW: gridRect?.width?.toFixed(0),
-        gridH: gridRect?.height?.toFixed(0),
-        bodyScrollW: document.body.scrollWidth,
-        bodyScrollH: document.body.scrollHeight,
-        docScrollW: document.documentElement.scrollWidth,
-        docScrollH: document.documentElement.scrollHeight,
-      });
-    };
-    update();
-    window.visualViewport?.addEventListener('resize', update);
-    window.addEventListener('resize', update);
-    return () => {
-      window.visualViewport?.removeEventListener('resize', update);
-      window.removeEventListener('resize', update);
-    };
-  }, []);
-  return (
-    <div
-      style={{
-        position: 'fixed', top: 0, left: 0, zIndex: 9999,
-        background: 'rgba(0,0,0,0.85)', color: '#0f0',
-        fontFamily: 'monospace', fontSize: '11px', lineHeight: '1.4',
-        padding: '8px', pointerEvents: 'none',
-        maxWidth: '100vw', overflow: 'hidden',
-      }}
-    >
-      {Object.entries(info).map(([k, v]) => (
-        <div key={k}><b>{k}:</b> {String(v)}</div>
-      ))}
-    </div>
-  );
-}
-
 /* ── Static decorative doodles (SVG, pointer-events: none) ────── */
 function Doodles() {
   return (
@@ -606,9 +549,6 @@ export default function App() {
           updatePlacedStickers([...(day.placedStickers || []), newSticker]);
         }}
       />
-
-      {/* ── DEBUG OVERLAY (temporary) ──── */}
-      <DebugOverlay />
 
     </div>
   );

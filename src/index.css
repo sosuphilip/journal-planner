@@ -115,13 +115,6 @@ html, body, #root {
   overscroll-behavior: none;
 }
 
-/* Prevent iOS elastic bounce on the outer container */
-body {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-}
-
 /* Prevent iOS auto-scroll to focused input */
 input, textarea, [contenteditable] {
   caret-color: var(--text);
