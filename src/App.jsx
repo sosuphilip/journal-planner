@@ -297,10 +297,6 @@ export default function App() {
     []
   );
 
-  const clearWeekStickers = useCallback(() => {
-    updatePlacedStickers([]);
-  }, [updatePlacedStickers]);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setStore(null);
@@ -528,21 +524,6 @@ export default function App() {
         }}
       />
 
-      {(weekData.days[selectedDayIndex]?.placedStickers || []).length > 0 && (
-        <button
-          onClick={clearWeekStickers}
-          className="fixed bottom-16 right-16 z-50 font-hand text-sm py-1 px-3 rounded-md"
-          style={{
-            background: "var(--clear-btn-bg)",
-            border: "1px solid var(--tray-border)",
-            color: "#c97b7b",
-            cursor: "pointer",
-            pointerEvents: "auto",
-          }}
-        >
-          clear stickers
-        </button>
-      )}
     </div>
   );
 }
