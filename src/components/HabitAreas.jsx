@@ -123,12 +123,13 @@ function HabitsTable({ habits, onHabitsChange }) {
     <div className="flex flex-col gap-0.5">
       {/* Header row */}
       <div className="flex items-center gap-0">
-        <div className="w-20 shrink-0" />
-        {DAY_HEADERS.map((d, i) => (            <div key={i} className="w-6 text-center font-hand text-sm font-bold" style={{ color: "var(--text-muted)", pointerEvents: "none" }}>
+        <div className="w-12 md:w-20 shrink-0" />
+        {DAY_HEADERS.map((d, i) => (
+          <div key={i} className="flex-1 text-center font-hand text-xs md:text-sm font-bold" style={{ color: "var(--text-muted)", pointerEvents: "none" }}>
             {d}
           </div>
         ))}
-        <div className="w-5 shrink-0" />
+        <div className="w-4 md:w-5 shrink-0" />
       </div>
 
       {/* Habit rows */}
@@ -140,7 +141,7 @@ function HabitsTable({ habits, onHabitsChange }) {
           onMouseLeave={() => setHoveredRow(null)}
         >
           {/* Habit name */}
-          <div className="w-20 shrink-0">
+          <div className="w-12 md:w-20 shrink-0">
             <EditableText
               value={habit.name}
               onChange={(name) => updateName(habit.id, name)}
@@ -155,7 +156,7 @@ function HabitsTable({ habits, onHabitsChange }) {
             <button
               key={dayIdx}
               onClick={() => cycleCell(habit.id, dayIdx)}
-              className={`habit-cell w-6 h-5 flex items-center justify-center bg-transparent border-none text-sm ${pulsingCell === `${habit.id}-${dayIdx}` ? "habit-cell-pulse" : ""}`}
+              className={`habit-cell flex-1 h-4 md:h-5 flex items-center justify-center bg-transparent border-none text-xs md:text-sm ${pulsingCell === `${habit.id}-${dayIdx}` ? "habit-cell-pulse" : ""}`}
               style={{ pointerEvents: "auto" }}
               title={`${habit.name || "habit"} — ${DAY_HEADERS[dayIdx]}`}
             >
