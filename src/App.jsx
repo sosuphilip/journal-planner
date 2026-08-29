@@ -101,6 +101,9 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("planner-theme", dark ? "dark" : "light");
+    // Update theme-color meta tag for PWA status bar
+    const meta = document.getElementById("theme-color");
+    if (meta) meta.content = dark ? "#1c1815" : "#e8e2d6";
   }, [dark]);
 
   // Listen for auth changes

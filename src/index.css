@@ -89,6 +89,11 @@
   background-color: rgba(130,180,100,0.15);
 }
 
+/* Dark mode: switch safe area / system UI background */
+.dark html, .dark body {
+  background: var(--bg);
+}
+
 /* ========================================
    GLOBAL RESETS & BASE STYLES
    ======================================== */
