@@ -472,8 +472,15 @@ textarea:focus, input[type="text"]:focus {
 /* ========================================
    NOTEBOOK SPREAD CONTAINER
    ======================================== */
+/* App shell — safe area padding goes here */
+.app-shell {
+  width: 100%;
+  height: 100%;
+}
+
 .notebook-spread {
   width: 100%;
+  height: 100%;
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
@@ -603,14 +610,13 @@ textarea:focus, input[type="text"]:focus {
 }
 
 /* Mobile landscape — no bottom nav, show both pages side by side.
-   Account for notch safe areas on iPhones. */
+   Safe area padding on the shell keeps content away from the notch. */
 @media (max-height: 500px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
   }
 
-  .notebook-spread {
-    width: 100% !important;
+  .app-shell {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
   }
 

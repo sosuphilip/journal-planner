@@ -91,30 +91,6 @@ export default function App() {
   useEffect(() => { storeRef.current = store; });
   const rightPageRef = useRef(null);
 
-  // Actual viewport height — bypasses CSS 100vh which can be wrong in PWAs
-  const NAV_HEIGHT = 60;
-  const [vh, setVh] = useState(() => {
-    const h = window.innerHeight;
-    const isMobilePortrait = window.innerWidth <= 768 && window.innerWidth > window.innerHeight;
-    return isMobilePortrait ? h - NAV_HEIGHT : h;
-  });
-  useEffect(() => {
-    const update = () => {
-      const h = window.innerHeight;
-      const w = window.innerWidth;
-      const isLandscape = w > h && h <= 500;
-      const showNav = w <= 768 && !isLandscape;
-      setVh(showNav ? h - NAV_HEIGHT : h);
-    };
-    update();
-    window.addEventListener('resize', update);
-    window.addEventListener('orientationchange', () => setTimeout(update, 150));
-    return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('orientationchange', update);
-    };
-  }, []);
-
   // Theme state — persists to localStorage, respects system preference
   const [dark, setDark] = useState(() => {
     const saved = localStorage.getItem("planner-theme");
@@ -375,7 +351,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative" style={{ background: "var(--bg)" }}>
+    <div className="app-shell w-screen h-screen overflow-hidden relative" style={{ background: "var(--bg)" }}>
       {/* Sign out button */}
       <button
         onClick={handleSignOut}
@@ -447,7 +423,7 @@ export default function App() {
       </div>
 
       {/* ── Two-page notebook spread ──── */}
-      <div className="notebook-spread relative" style={{ height: vh }}>
+      <div className="notebook-spread relative">
         <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
