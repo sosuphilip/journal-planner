@@ -490,12 +490,13 @@ export default function App() {
           </div>
         </div>
 
-        <StickerLayer
-          placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
-          onPlacedChange={updatePlacedStickers}
-          customStickers={store.customStickers}
-        />
       </div>
+
+      <StickerLayer
+        placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
+        onPlacedChange={updatePlacedStickers}
+        customStickers={store.customStickers}
+      />
 
       {/* ── Mobile bottom nav (only visible on small screens) ──── */}
       <div className="mobile-nav">

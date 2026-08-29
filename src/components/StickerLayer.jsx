@@ -1,13 +1,13 @@
 /* ========================================
    STICKER LAYER — rendered above page content
+   Uses position:fixed so stickers stay pinned to the viewport.
    Handles placement, drag, resize, rotate, delete.
    Supports both mouse and touch interactions.
    ======================================== */
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { uid } from "../store";
 import { BUILTIN_STICKERS } from "./StickerTray";
 
-// Helper: extract client coordinates from mouse or touch event
 function clientXY(e) {
   if (e.touches && e.touches.length > 0) {
     return { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -19,22 +19,13 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   const [selectedId, setSelectedId] = useState(null);
   const dragRef = useRef({});
   const stickersRef = useRef(placedStickers);
-  useEffect(() => {
-    stickersRef.current = placedStickers;
-  }, [placedStickers]);
+  useEffect(() => { stickersRef.current = placedStickers; }, [placedStickers]);
 
   const getStickerContent = (sticker) => {
     if (sticker.isCustom) {
       const custom = customStickers.find((cs) => cs.id === sticker.stickerType);
       if (custom) {
-        return (
-          <img
-            src={custom.imageDataUrl}
-            alt={custom.name}
-            className="w-full h-full object-contain"
-            draggable={false}
-          />
-        );
+        return <img src={custom.imageDataUrl} alt={custom.name} className="w-full h-full object-contain" draggable={false} />;
       }
       return null;
     }
@@ -43,87 +34,64 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     return <div className="w-full h-full">{svg}</div>;
   };
 
-  // ── Move sticker (mouse + touch) ──
+  // ── Move sticker ──
   const handlePointerDown = (e, id) => {
     e.stopPropagation();
     e.preventDefault();
     setSelectedId(id);
     const { x: cx, y: cy } = clientXY(e);
     const sticker = stickersRef.current.find((s) => s.id === id);
-    dragRef.current = {
-      id,
-      startX: cx,
-      startY: cy,
-      origX: sticker.x,
-      origY: sticker.y,
-    };
+    dragRef.current = { id, startX: cx, startY: cy, origX: sticker.x, origY: sticker.y };
 
-    const handlePointerMove = (e) => {
+    const onMove = (e) => {
       const { x: cx, y: cy } = clientXY(e);
       const dx = cx - dragRef.current.startX;
       const dy = cy - dragRef.current.startY;
-      const current = stickersRef.current;
-      onPlacedChange(
-        current.map((s) =>
-          s.id === id ? { ...s, x: dragRef.current.origX + dx, y: dragRef.current.origY + dy } : s
-        )
+      onPlacedChange(stickersRef.current.map((s) =>
+        s.id === id ? { ...s, x: dragRef.current.origX + dx, y: dragRef.current.origY + dy } : s
+      ));
+    };
+    const onUp = () => {
+      ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
+        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-
-    const handlePointerUp = () => {
-      document.removeEventListener("mousemove", handlePointerMove);
-      document.removeEventListener("mouseup", handlePointerUp);
-      document.removeEventListener("touchmove", handlePointerMove);
-      document.removeEventListener("touchend", handlePointerUp);
-      document.removeEventListener("touchcancel", handlePointerUp);
-    };
-
-    document.addEventListener("mousemove", handlePointerMove);
-    document.addEventListener("mouseup", handlePointerUp);
-    document.addEventListener("touchmove", handlePointerMove, { passive: false });
-    document.addEventListener("touchend", handlePointerUp);
-    document.addEventListener("touchcancel", handlePointerUp);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.addEventListener("touchmove", onMove, { passive: false });
+    document.addEventListener("touchend", onUp);
+    document.addEventListener("touchcancel", onUp);
   };
 
-  // ── Resize sticker (mouse + touch) ──
+  // ── Resize sticker ──
   const handleResizePointerDown = (e, id) => {
     e.stopPropagation();
     e.preventDefault();
     const sticker = stickersRef.current.find((s) => s.id === id);
-    const { x: startX, y: startY } = clientXY(e);
+    const { x: startX } = clientXY(e);
     const origW = sticker.width;
-    const origH = sticker.height;
 
-    const handlePointerMove = (e) => {
+    const onMove = (e) => {
       const { x: cx } = clientXY(e);
       const dx = cx - startX;
       const scale = 1 + dx / 200;
-      const newW = Math.max(20, origW * scale);
-      const newH = Math.max(20, origH * scale);
-      const current = stickersRef.current;
-      onPlacedChange(
-        current.map((s) =>
-          s.id === id ? { ...s, width: newW, height: newH } : s
-        )
+      onPlacedChange(stickersRef.current.map((s) =>
+        s.id === id ? { ...s, width: Math.max(20, origW * scale), height: Math.max(20, origW * scale) } : s
+      ));
+    };
+    const onUp = () => {
+      ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
+        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-
-    const handlePointerUp = () => {
-      document.removeEventListener("mousemove", handlePointerMove);
-      document.removeEventListener("mouseup", handlePointerUp);
-      document.removeEventListener("touchmove", handlePointerMove);
-      document.removeEventListener("touchend", handlePointerUp);
-      document.removeEventListener("touchcancel", handlePointerUp);
-    };
-
-    document.addEventListener("mousemove", handlePointerMove);
-    document.addEventListener("mouseup", handlePointerUp);
-    document.addEventListener("touchmove", handlePointerMove, { passive: false });
-    document.addEventListener("touchend", handlePointerUp);
-    document.addEventListener("touchcancel", handlePointerUp);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.addEventListener("touchmove", onMove, { passive: false });
+    document.addEventListener("touchend", onUp);
+    document.addEventListener("touchcancel", onUp);
   };
 
-  // ── Rotate sticker (mouse + touch) ──
+  // ── Rotate sticker ──
   const handleRotatePointerDown = (e, id) => {
     e.stopPropagation();
     e.preventDefault();
@@ -134,31 +102,24 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const startAngle = Math.atan2(cy - centerY, cx - centerX);
     const origRotation = sticker.rotation || 0;
 
-    const handlePointerMove = (e) => {
+    const onMove = (e) => {
       const { x: cx, y: cy } = clientXY(e);
       const angle = Math.atan2(cy - centerY, cx - centerX);
       const delta = ((angle - startAngle) * 180) / Math.PI;
-      const current = stickersRef.current;
-      onPlacedChange(
-        current.map((s) =>
-          s.id === id ? { ...s, rotation: origRotation + delta } : s
-        )
+      onPlacedChange(stickersRef.current.map((s) =>
+        s.id === id ? { ...s, rotation: origRotation + delta } : s
+      ));
+    };
+    const onUp = () => {
+      ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
+        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-
-    const handlePointerUp = () => {
-      document.removeEventListener("mousemove", handlePointerMove);
-      document.removeEventListener("mouseup", handlePointerUp);
-      document.removeEventListener("touchmove", handlePointerMove);
-      document.removeEventListener("touchend", handlePointerUp);
-      document.removeEventListener("touchcancel", handlePointerUp);
-    };
-
-    document.addEventListener("mousemove", handlePointerMove);
-    document.addEventListener("mouseup", handlePointerUp);
-    document.addEventListener("touchmove", handlePointerMove, { passive: false });
-    document.addEventListener("touchend", handlePointerUp);
-    document.addEventListener("touchcancel", handlePointerUp);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.addEventListener("touchmove", onMove, { passive: false });
+    document.addEventListener("touchend", onUp);
+    document.addEventListener("touchcancel", onUp);
   };
 
   const handleDelete = (id) => {
@@ -166,7 +127,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     setSelectedId(null);
   };
 
-  // Deselect sticker when tapping/clicking anywhere outside a sticker
+  // Deselect on tap/click outside
   useEffect(() => {
     const handleOutside = (e) => {
       if (!e.target.closest(".sticker-item") && !e.target.closest(".sticker-tray")) {
@@ -181,69 +142,49 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     };
   }, []);
 
-  // Handle drop from tray (desktop drag)
+  // ── Drop from tray (desktop) ──
   const [isDragActive, setIsDragActive] = useState(false);
 
   useEffect(() => {
     const handleDragEnter = (e) => {
-      const types = e.dataTransfer?.types;
-      if (types && Array.from(types).includes("application/sticker")) {
+      if (e.dataTransfer?.types && Array.from(e.dataTransfer.types).includes("application/sticker")) {
         setIsDragActive(true);
       }
     };
-    const handleDragEnd = () => setIsDragActive(false);
-    const handleDropGlobal = () => setIsDragActive(false);
-
+    const off = () => setIsDragActive(false);
     document.addEventListener("dragenter", handleDragEnter);
-    document.addEventListener("dragend", handleDragEnd);
-    document.addEventListener("drop", handleDropGlobal);
+    document.addEventListener("dragend", off);
+    document.addEventListener("drop", off);
     return () => {
       document.removeEventListener("dragenter", handleDragEnter);
-      document.removeEventListener("dragend", handleDragEnd);
-      document.removeEventListener("drop", handleDropGlobal);
+      document.removeEventListener("dragend", off);
+      document.removeEventListener("drop", off);
     };
   }, []);
 
-  const handleDrop = useCallback(
-    (e) => {
-      e.preventDefault();
-      setIsDragActive(false);
-      const data = e.dataTransfer.getData("application/sticker");
-      if (!data) return;
-      const { stickerType, isCustom } = JSON.parse(data);
-
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left - 25;
-      const y = e.clientY - rect.top - 25;
-
-      const newSticker = {
-        id: uid(),
-        stickerType,
-        isCustom: isCustom || false,
-        x,
-        y,
-        width: 50,
-        height: 50,
-        rotation: 0,
-      };
-
-      onPlacedChange([...stickersRef.current, newSticker]);
-    },
-    [onPlacedChange]
-  );
-
-  const handleDragOver = (e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
+    setIsDragActive(false);
+    const data = e.dataTransfer?.getData("application/sticker");
+    if (!data) return;
+    const { stickerType, isCustom } = JSON.parse(data);
+    onPlacedChange([...stickersRef.current, {
+      id: uid(), stickerType, isCustom: isCustom || false,
+      x: e.clientX - 25, y: e.clientY - 25,
+      width: 50, height: 50, rotation: 0,
+    }]);
   };
 
-  // Track which stickers have already played the pop-in animation
+  const handleDragOver = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; };
+
   const animatedRef = useRef(new Set());
 
   return (
     <div
-      className="sticker-layer"
       style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 50,
         pointerEvents: isDragActive ? "auto" : "none",
         userSelect: "none",
       }}
@@ -258,22 +199,19 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
           <div
             key={sticker.id}
             style={{
-              position: "absolute",
+              position: "fixed",
               left: sticker.x,
               top: sticker.y,
               width: sticker.width,
               height: sticker.height,
               transform: `rotate(${sticker.rotation || 0}deg)`,
-              zIndex: isSelected ? 100 : 50,
+              zIndex: isSelected ? 100 : 51,
               userSelect: "none",
               touchAction: "none",
             }}
             onMouseDown={(e) => handlePointerDown(e, sticker.id)}
             onTouchStart={(e) => handlePointerDown(e, sticker.id)}
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedId(sticker.id);
-            }}
+            onClick={(e) => { e.stopPropagation(); setSelectedId(sticker.id); }}
           >
             <div
               className={`sticker-item ${isNew ? "sticker-pop" : ""}`}
@@ -284,22 +222,15 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
 
             {isSelected && (
               <>
-                {/* Delete button — bigger touch target */}
                 <button
                   onMouseDown={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(sticker.id);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleDelete(sticker.id); }}
                   className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-muted-pink text-white text-xs flex items-center justify-center cursor-pointer"
                   style={{ fontSize: "12px", lineHeight: 1, pointerEvents: "auto", userSelect: "none", touchAction: "none" }}
                   title="Delete sticker"
-                >
-                  ×
-                </button>
+                >×</button>
 
-                {/* Rotate handle — bigger touch target */}
                 <div
                   onMouseDown={(e) => handleRotatePointerDown(e, sticker.id)}
                   onTouchStart={(e) => handleRotatePointerDown(e, sticker.id)}
@@ -313,7 +244,6 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                   </svg>
                 </div>
 
-                {/* Resize handle — bigger touch target */}
                 <div
                   onMouseDown={(e) => handleResizePointerDown(e, sticker.id)}
                   onTouchStart={(e) => handleResizePointerDown(e, sticker.id)}
