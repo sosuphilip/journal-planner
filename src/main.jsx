@@ -42,6 +42,13 @@ window.addEventListener('orientationchange', () => {
   }
 
   document.addEventListener('touchstart', (e) => {
+    // Any new touch: force-clear any lingering zoom immediately
+    if (active || document.body.style.transform) {
+      active = false;
+      document.body.style.transition = 'none';
+      document.body.style.transform = '';
+      document.body.style.transformOrigin = '';
+    }
     if (e.touches.length !== 2) return;
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
