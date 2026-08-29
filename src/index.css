@@ -460,9 +460,9 @@ textarea:focus, input[type="text"]:focus {
     height: 11px;
   }
 
-  /* Sticker tray */
-  .sticker-tray {
-    transform: scale(0.8);
+  /* Sticker tray button only — not the panel */
+  .sticker-tray.fixed.rounded-full {
+    transform: scale(0.85);
   }
 
   /* Journal textarea — keep >=16px to prevent iOS auto-zoom */
