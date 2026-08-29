@@ -262,8 +262,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                   onMouseDown={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
                   onClick={(e) => { e.stopPropagation(); handleDelete(sticker.id); }}
-                  className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-muted-pink text-white text-xs flex items-center justify-center cursor-pointer"
-                  style={{ fontSize: "12px", lineHeight: 1, pointerEvents: "auto", userSelect: "none", touchAction: "none" }}
+                  className="absolute -top-3 -right-3 w-7 h-7 rounded-full text-white text-xs flex items-center justify-center cursor-pointer"
+                  style={{ fontSize: "12px", lineHeight: 1, pointerEvents: "auto", userSelect: "none", touchAction: "none", background: 'var(--color-muted-pink)' }}
                   title="Delete sticker"
                 >×</button>
 
@@ -283,8 +283,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                 <div
                   onMouseDown={(e) => handleResizePointerDown(e, sticker.id)}
                   onTouchStart={(e) => handleResizePointerDown(e, sticker.id)}
-                  className="absolute -bottom-3 -right-3 w-6 h-6 rounded-full bg-sage cursor-se-resize"
-                  style={{ pointerEvents: "auto", userSelect: "none", touchAction: "none" }}
+                  className="absolute -bottom-3 -right-3 w-6 h-6 rounded-full cursor-se-resize"
+                  style={{ pointerEvents: "auto", userSelect: "none", touchAction: "none", background: 'var(--color-sage)' }}
                   title="Resize"
                 />
               </>

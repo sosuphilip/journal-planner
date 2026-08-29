@@ -63,14 +63,9 @@ export default function DayRow({ day, index, isToday, isSelected, onSelect, onDa
           </span>
         )}
         <span
-          className={`font-hand text-2xl font-bold leading-none ${
-            dateCircled
-              ? "text-muted-red"
-              : isToday
-              ? "text-dusty-blue"
-              : "text-gray-700"
-          }`}
+          className="font-hand text-2xl font-bold leading-none"
           style={{
+            color: dateCircled ? "var(--color-muted-red)" : isToday ? "var(--color-dusty-blue)" : "var(--text)",
             ...(dateCircled
               ? {
                   border: "2px solid #c97b7b",

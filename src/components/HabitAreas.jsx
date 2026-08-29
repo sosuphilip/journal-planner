@@ -178,7 +178,7 @@ className="relative flex items-center gap-0 group"
           {/* Delete — absolute so it doesn't push layout */}
           <button
             onClick={() => removeHabit(habit.id)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-5 text-muted-pink text-xs bg-transparent border-none cursor-pointer transition-opacity"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-5 text-xs bg-transparent border-none cursor-pointer transition-opacity" style={{ color: 'var(--color-muted-pink)' }}
             style={{ pointerEvents: "auto", opacity: hoveredRow === habit.id ? 0.6 : 0 }}
             title="Remove habit"
           >
@@ -190,7 +190,7 @@ className="relative flex items-center gap-0 group"
       {/* Add habit */}
       <button
         onClick={(e) => { e.stopPropagation(); addHabit(); }}
-        className="text-sm mt-0.5 bg-transparent border-none cursor-pointer text-left hover:text-muted-red transition-colors"
+        className="text-sm mt-0.5 bg-transparent border-none cursor-pointer text-left transition-colors" style={{ color: 'var(--text-muted)' }}
         style={{ pointerEvents: "auto", color: "var(--text-muted)" }}
       >
         + add habit

@@ -32,7 +32,7 @@ export default function TodoCard({ data, onUpdate }) {
     >
       {/* Card title */}
       <div className="flex items-center gap-1.5 mb-1.5">
-        <span className="text-muted-pink text-base" style={{ pointerEvents: "none" }}>✿</span>
+        <span className="text-base" style={{ pointerEvents: "none", color: 'var(--color-muted-pink)' }}>✿</span>
         <EditableText
           value={title}
           onChange={handleTitleChange}

@@ -18,11 +18,11 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
     <div className="flex flex-col items-center w-full no-interact relative">
       {/* Month + Year pill */}
       <div
-        className="bg-sage-light rounded-full px-5 py-0.5 mb-1"
+        className="rounded-full px-5 py-0.5 mb-1" style={{ background: 'rgba(184,201,163,0.3)' }}
         style={{ pointerEvents: "none" }}
       >
         <span
-          className="font-hand text-xl font-semibold text-sage"
+          className="font-hand text-xl font-semibold" style={{ color: 'var(--color-sage)' }}
           style={{ color: "#6b8a5e" }}
         >
           {monthYear}
@@ -32,7 +32,7 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
       {/* Week label + nav arrows */}
       <div className="flex items-center gap-3 mt-0.5">
         <button
-          className="nav-arrow text-dusty-blue no-interact"
+          className="nav-arrow no-interact" style={{ color: 'var(--color-dusty-blue)' }}
           style={{ pointerEvents: "auto" }}
           onClick={() => onNavigate(adjacentWeek(weekStart, -1))}
           aria-label="Previous week"
@@ -50,7 +50,7 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
         </span>
 
         <button
-          className="nav-arrow text-dusty-blue no-interact"
+          className="nav-arrow no-interact" style={{ color: 'var(--color-dusty-blue)' }}
           style={{ pointerEvents: "auto" }}
           onClick={() => onNavigate(adjacentWeek(weekStart, 1))}
           aria-label="Next week"

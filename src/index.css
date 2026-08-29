@@ -3,20 +3,6 @@
 @theme {
   --font-hand: "Caveat", "Patrick Hand", cursive;
   --font-hand-alt: "Patrick Hand", "Caveat", cursive;
-
-  --color-sage: #7a9a5e;
-  --color-sage-light: #d4e4c5;
-  --color-dusty-blue: #5a8ab0;
-  --color-dusty-blue-light: #c5d8e6;
-  --color-muted-pink: #b07070;
-  --color-muted-pink-light: #f0d4d4;
-  --color-soft-yellow: #c4a030;
-  --color-soft-yellow-light: #f7edc5;
-  --color-muted-red: #a05050;
-  --color-accent-blue: #4a7a9a;
-  --color-tab-orange: #e8a87c;
-  --color-tab-blue: #7ca5c9;
-  --color-tab-green: #8cb88c;
 }
 
 /* ========================================
@@ -49,6 +35,12 @@
   --color-cream: #faf6ee;
   --input-hover-bg: rgba(255,255,255,0.6);
   --habit-hover: rgba(184,201,163,0.15);
+  --color-sage: #7a9a5e;
+  --color-dusty-blue: #5a8ab0;
+  --color-muted-pink: #b07070;
+  --color-soft-yellow: #c4a030;
+  --color-muted-red: #a05050;
+  --color-accent-blue: #4a7a9a;
 }
 
 .dark {
@@ -77,6 +69,12 @@
   --clear-btn-bg: rgba(60,52,44,0.9);
   --input-hover-bg: rgba(70,62,52,0.7);
   --habit-hover: rgba(130,180,100,0.15);
+  --color-sage: #9ab87a;
+  --color-dusty-blue: #7ab0d0;
+  --color-muted-pink: #d09090;
+  --color-soft-yellow: #d4b850;
+  --color-muted-red: #c07070;
+  --color-accent-blue: #6a9ec0;
 }
 
 .dark .check-item-checked {
