@@ -471,6 +471,8 @@ textarea:focus, input[type="text"]:focus {
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
+  outline: 2px solid red;
+  outline-offset: -2px;
 }
 
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
