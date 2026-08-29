@@ -110,6 +110,17 @@ html, body, #root {
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 17px;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: auto;
+}
+
+/* Prevent iOS auto-scroll to focused input */
+input, textarea, [contenteditable] {
+  caret-color: var(--text);
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 /* Dark mode: stronger page shadows for depth */
