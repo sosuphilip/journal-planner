@@ -97,7 +97,7 @@ export default function Checklist({ items = [], onChange, showCheckboxes = true,
 
       {/* Add button */}
       <button
-        onClick={addItem}            className="text-sm mt-1 bg-transparent border-none cursor-pointer text-left hover:text-muted-red transition-colors no-interact"
+        onClick={(e) => { e.stopPropagation(); addItem(); }}            className="text-sm mt-1 bg-transparent border-none cursor-pointer text-left hover:text-muted-red transition-colors no-interact"
         style={{ pointerEvents: "auto", color: "var(--text-muted)" }}
       >
         + add item

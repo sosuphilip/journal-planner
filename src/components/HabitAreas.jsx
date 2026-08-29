@@ -189,7 +189,7 @@ className="relative flex items-center gap-0 group"
 
       {/* Add habit */}
       <button
-        onClick={addHabit}
+        onClick={(e) => { e.stopPropagation(); addHabit(); }}
         className="text-sm mt-0.5 bg-transparent border-none cursor-pointer text-left hover:text-muted-red transition-colors"
         style={{ pointerEvents: "auto", color: "var(--text-muted)" }}
       >
