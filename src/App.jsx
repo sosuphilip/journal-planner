@@ -374,7 +374,7 @@ export default function App() {
           <div
             className="absolute no-interact"
             style={{
-              left: -28,
+              left: -48,
               top: "30%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
@@ -395,7 +395,7 @@ export default function App() {
           <div
             className="absolute no-interact"
             style={{
-              left: -22,
+              left: -40,
               top: "45%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
