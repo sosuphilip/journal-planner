@@ -79,18 +79,26 @@ window.addEventListener('orientationchange', () => {
     }
   });
 
-  // Reset zoom when any input/textarea loses focus
-  document.addEventListener('focusin', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      // Reset zoom when focusing an input
-      if (scale !== 1) {
-        document.body.style.transition = 'transform 0.2s ease-out';
-        scale = 1;
-        document.body.style.transform = '';
-        document.body.style.transformOrigin = '';
-        setTimeout(() => { document.body.style.transition = ''; }, 250);
-      }
+  // Reset zoom when any input/textarea is focused or blurred
+  function resetZoom() {
+    if (scale !== 1) {
+      document.body.style.transition = 'transform 0.2s ease-out';
+      scale = 1;
+      document.body.style.transform = '';
+      document.body.style.transformOrigin = '';
+      setTimeout(() => { document.body.style.transition = ''; }, 250);
     }
+  }
+  document.addEventListener('focusin', resetZoom);
+  document.addEventListener('focusout', resetZoom);
+
+  // Also reset when keyboard hides (viewport resize after blur)
+  let lastHeight = window.innerHeight;
+  window.addEventListener('resize', () => {
+    if (window.innerHeight > lastHeight && scale !== 1) {
+      resetZoom();
+    }
+    lastHeight = window.innerHeight;
   });
 })();
 
