@@ -84,6 +84,7 @@ function blankWeek(weekStartStr) {
 
   return {
     days,
+    todoCard: { title: "todo list", items: [] },
     habits: [
       { id: uid(), name: "dance", days: [false, false, false, false, false, false, false] },
       { id: uid(), name: "gym", days: [false, false, false, false, false, false, false] },
@@ -178,8 +179,8 @@ function createSeedData() {
   week.days[6].journalMood = "";
   week.days[6].musicNote = { line1: "", line2: "" };
 
-  // Todo card
-  const todoCard = {
+  // Todo card (per-week)
+  week.todoCard = {
     title: "app-plan todo",
     items: [
       { id: uid(), text: "try claude design for icons", checked: true },
@@ -207,7 +208,6 @@ function createSeedData() {
 
   return {
     weeks: { [weekKey]: week },
-    todoCard,
     habits,
     waterTrack,
     customStickers: [],

@@ -43,7 +43,7 @@ export async function loadCloudStore(userId) {
   let weeks = {};
   if (weeksResult.status === "fulfilled" && weeksResult.value.data) {
     for (const row of weeksResult.value.data) {
-      weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [] };
+      weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [], todoCard: row.todo_card || { title: "todo list", items: [] } };
     }
   }
 
@@ -53,7 +53,6 @@ export async function loadCloudStore(userId) {
 
   const cloudData = {
     weeks,
-    todoCard: settings?.todo_card || { title: "app-plan todo", items: [] },
     habits: settings?.habits || [],
     waterTrack: settings?.water_track || {},
     customStickers: settings?.custom_stickers || [],
@@ -79,6 +78,7 @@ export async function saveWeek(userId, weekStart, weekData) {
       week_start: weekStart,
       days_data: weekData.days,
       habits_data: weekData.habits || [],
+      todo_card: weekData.todoCard || {},
     },
     { onConflict: "user_id,week_start" }
   );
@@ -90,7 +90,6 @@ export async function saveSettings(userId, store) {
   const { error } = await supabase.from("settings").upsert(
     {
       user_id: userId,
-      todo_card: store.todoCard,
       habits: store.habits,
       water_track: store.waterTrack,
       custom_stickers: store.customStickers,
@@ -111,21 +110,8 @@ export async function createDefaultSettings(userId) {
     { id: uid(), name: "calisthenics", days: [false, false, false, false, false, false, false] },
   ];
 
-  const todoCard = {
-    title: "app-plan todo",
-    items: [
-      { id: uid(), text: "try claude design for icons", checked: true },
-      { id: uid(), text: "check system design", checked: false },
-      { id: uid(), text: "resize images", checked: false },
-      { id: uid(), text: "make a to-do list for first alpha release testing", checked: false },
-      { id: uid(), text: "look into background removal", checked: false },
-      { id: uid(), text: "check the action videos", checked: false },
-    ],
-  };
-
   const { error } = await supabase.from("settings").insert({
     user_id: userId,
-    todo_card: todoCard,
     habits,
     water_track: { [fmtDate(new Date())]: 1.8 },
     custom_stickers: [],

@@ -267,9 +267,14 @@ export default function App() {
 
   const updateTodoCard = useCallback(
     (newTodoCard) => {
-      setStore((prev) => (prev ? { ...prev, todoCard: newTodoCard } : prev));
+      setStore((prev) => {
+        if (!prev) return prev;
+        const wd = prev.weeks[weekStart];
+        if (!wd) return prev;
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, todoCard: newTodoCard } } };
+      });
     },
-    []
+    [weekStart]
   );
 
   const updateHabits = useCallback(
@@ -490,7 +495,7 @@ export default function App() {
                 </div>
 
                 <div className="w-full md:w-[42%] shrink-0">
-                  <TodoCard data={store.todoCard} onUpdate={updateTodoCard} />
+                  <TodoCard data={weekData.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
                 </div>
               </div>
 
