@@ -31,14 +31,18 @@ window.addEventListener('orientationchange', () => {
     return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   }
 
+  const root = document.getElementById('root');
+
   function clearZoom() {
     pinching = false;
-    document.body.style.cssText = '';
+    root.style.transform = '';
+    root.style.transformOrigin = '';
+    root.style.transition = '';
   }
 
   document.addEventListener('touchstart', (e) => {
     // Always force-clear any lingering state from previous gesture
-    if (document.body.style.transform) clearZoom();
+    if (root.style.transform) clearZoom();
     if (e.touches.length !== 2) return;
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
@@ -54,9 +58,9 @@ window.addEventListener('orientationchange', () => {
     e.preventDefault();
     const cur = d(e.touches[0], e.touches[1]);
     const scale = Math.min(Math.max(cur / lastDist, 0.5), 3);
-    document.body.style.transition = 'none';
-    document.body.style.transformOrigin = `${originX}px ${originY}px`;
-    document.body.style.transform = `scale(${scale})`;
+    root.style.transition = 'none';
+    root.style.transformOrigin = `${originX}px ${originY}px`;
+    root.style.transform = `scale(${scale})`;
   }, { passive: false });
 
   document.addEventListener('touchend', clearZoom);

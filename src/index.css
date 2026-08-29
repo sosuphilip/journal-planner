@@ -113,8 +113,7 @@ html, body, #root {
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 17px;
-  touch-action: pinch-zoom pan-x pan-y;
-  transform-origin: center center;
+  touch-action: pan-x pan-y;
   -webkit-overflow-scrolling: auto;
   overscroll-behavior: none;
 }
