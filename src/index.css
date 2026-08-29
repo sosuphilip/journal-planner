@@ -326,6 +326,15 @@ textarea:focus, input[type="text"]:focus {
   scrollbar-width: none;
 }
 
+/* Hide all scrollbars globally */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ========================================
    INLINE EDITABLE TEXT
    ======================================== */
