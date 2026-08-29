@@ -90,7 +90,7 @@
 }
 
 /* Dark mode: switch safe area / system UI background */
-.dark html, .dark body {
+.dark html, .dark body, .dark .app-shell {
   background: var(--bg);
 }
 
@@ -419,7 +419,7 @@ textarea:focus, input[type="text"]:focus {
     height: 10px;
   }
 
-  .sticker-tray {
+  .sticker-tray.fixed.rounded-full {
     transform: scale(0.7);
   }
 
