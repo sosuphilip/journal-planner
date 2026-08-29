@@ -115,6 +115,13 @@ html, body, #root {
   overscroll-behavior: none;
 }
 
+/* PWA standalone: fill behind status bar */
+body {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
 /* Prevent iOS auto-scroll to focused input */
 input, textarea, [contenteditable] {
   caret-color: var(--text);
