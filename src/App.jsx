@@ -343,7 +343,7 @@ export default function App() {
       {/* Sign out button */}
       <button
         onClick={handleSignOut}
-        className="fixed top-3 right-3 z-50 font-hand text-sm py-1 px-3 rounded-md cursor-pointer"
+        className="sign-out-btn fixed z-50 font-hand text-sm py-1 px-3 rounded-md cursor-pointer"
         style={{
           background: "var(--clear-btn-bg)",
           border: "1px solid var(--tray-border)",

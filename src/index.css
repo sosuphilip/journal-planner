@@ -530,6 +530,44 @@ textarea:focus, input[type="text"]:focus {
 }
 
 /* ========================================
+   SIGN OUT BUTTON
+   ======================================== */
+.sign-out-btn {
+  top: 12px;
+  right: 12px;
+}
+
+@media (max-width: 768px) {
+  .sign-out-btn {
+    bottom: 60px;
+    left: 8px;
+    top: auto;
+    right: auto;
+    font-size: 11px;
+    padding: 2px 8px;
+    opacity: 0.5;
+  }
+  .sign-out-btn:active {
+    opacity: 1;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .sign-out-btn {
+    bottom: 8px;
+    left: 8px;
+    top: auto;
+    right: auto;
+    font-size: 10px;
+    padding: 2px 6px;
+    opacity: 0.4;
+  }
+  .sign-out-btn:active {
+    opacity: 1;
+  }
+}
+
+/* ========================================
    MOBILE BOTTOM NAV
    ======================================== */
 .mobile-nav {
