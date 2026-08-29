@@ -69,6 +69,20 @@ window.addEventListener('orientationchange', () => {
       setTimeout(() => { document.body.style.transition = ''; }, 350);
     }
   });
+
+  // Reset zoom when any input/textarea loses focus
+  document.addEventListener('focusin', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      // Reset zoom when focusing an input
+      if (scale !== 1) {
+        document.body.style.transition = 'transform 0.2s ease-out';
+        scale = 1;
+        document.body.style.transform = '';
+        document.body.style.transformOrigin = '';
+        setTimeout(() => { document.body.style.transition = ''; }, 250);
+      }
+    }
+  });
 })();
 
 createRoot(document.getElementById('root')).render(
