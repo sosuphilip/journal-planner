@@ -494,6 +494,13 @@ textarea:focus, input[type="text"]:focus {
   z-index: 100;
 }
 
+/* In landscape, tabs wrapper gets safe area padding so tabs don't go under notch */
+@media (max-height: 500px) and (orientation: landscape) {
+  .notebook-tabs {
+    padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+  }
+}
+
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
 .page-scroll {
   overflow: hidden;
