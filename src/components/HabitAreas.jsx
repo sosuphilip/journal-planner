@@ -89,22 +89,24 @@ function HabitsTable({ habits, onHabitsChange }) {
   const cycleCell = (habitId, dayIdx) => {
     setPulsingCell(`${habitId}-${dayIdx}`);
     setTimeout(() => setPulsingCell(null), 250);
+    // Deep clone all habits to prevent shared references
+    const cloned = habits.map((h) => ({ ...h, days: [...h.days] }));
     onHabitsChange(
-      habits.map((h) => {
+      cloned.map((h) => {
         if (h.id !== habitId) return h;
-        const newDays = [...h.days];
-        const current = newDays[dayIdx];
-        if (current === false) newDays[dayIdx] = true;
-        else if (current === true) newDays[dayIdx] = "x";
-        else newDays[dayIdx] = false;
-        return { ...h, days: newDays };
+        const current = h.days[dayIdx];
+        if (current === false) h.days[dayIdx] = true;
+        else if (current === true) h.days[dayIdx] = "x";
+        else h.days[dayIdx] = false;
+        return h;
       })
     );
   };
 
   const updateName = (habitId, name) => {
+    const cloned = habits.map((h) => ({ ...h, days: [...h.days] }));
     onHabitsChange(
-      habits.map((h) => (h.id === habitId ? { ...h, name } : h))
+      cloned.map((h) => (h.id === habitId ? { ...h, name } : h))
     );
   };
 
