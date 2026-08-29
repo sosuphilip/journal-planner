@@ -611,7 +611,7 @@ textarea:focus, input[type="text"]:focus {
 
   .notebook-spread {
     width: 100% !important;
-    padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
   }
 
   .notebook-grid {
