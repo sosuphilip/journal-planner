@@ -283,10 +283,12 @@ export default function App() {
         if (!prev) return prev;
         const wd = prev.weeks[weekStart];
         if (!wd) return prev;
-        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, todoCard: newTodoCard } } };
+        const newDays = [...wd.days];
+        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], todoCard: newTodoCard };
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
       });
     },
-    [weekStart]
+    [weekStart, selectedDayIndex]
   );
 
   const updateHabits = useCallback(
@@ -507,7 +509,7 @@ export default function App() {
                 </div>
 
                 <div className="w-full md:w-[42%] shrink-0">
-                  <TodoCard data={weekData.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
+                  <TodoCard data={weekData.days[selectedDayIndex]?.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
                 </div>
               </div>
 

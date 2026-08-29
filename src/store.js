@@ -77,14 +77,14 @@ function blankWeek(weekStartStr) {
       musicNote: { line1: "", line2: "" },
       specialNote: "",
       dateCircled: false,
-      dateSticker: null,
-      placedStickers: [],
+      dateSticker: null,      placedStickers: [],
+      todoCard: { title: "todo list", items: [] },
     };
   });
 
+
   return {
     days,
-    todoCard: { title: "todo list", items: [] },
     habits: [
       { id: uid(), name: "dance", days: [false, false, false, false, false, false, false] },
       { id: uid(), name: "gym", days: [false, false, false, false, false, false, false] },
@@ -179,16 +179,18 @@ function createSeedData() {
   week.days[6].journalMood = "";
   week.days[6].musicNote = { line1: "", line2: "" };
 
-  // Todo card (per-week)
-  week.todoCard = {
-    title: "app-plan todo",
+  // Seed todo cards per day
+  week.days[0].todoCard = {
+    title: "monday todo",
     items: [
       { id: uid(), text: "try claude design for icons", checked: true },
       { id: uid(), text: "check system design", checked: false },
+    ],
+  };
+  week.days[1].todoCard = {
+    title: "tuesday todo",
+    items: [
       { id: uid(), text: "resize images", checked: false },
-      { id: uid(), text: "make a to-do list for first alpha release testing", checked: false },
-      { id: uid(), text: "look into background removal", checked: false },
-      { id: uid(), text: "check the action videos", checked: false },
     ],
   };
 

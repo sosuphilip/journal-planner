@@ -43,7 +43,7 @@ export async function loadCloudStore(userId) {
   let weeks = {};
   if (weeksResult.status === "fulfilled" && weeksResult.value.data) {
     for (const row of weeksResult.value.data) {
-      weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [], todoCard: row.todo_card || { title: "todo list", items: [] } };
+      weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [] };
     }
   }
 
@@ -78,7 +78,7 @@ export async function saveWeek(userId, weekStart, weekData) {
       week_start: weekStart,
       days_data: weekData.days,
       habits_data: weekData.habits || [],
-      todo_card: weekData.todoCard || {},
+
     },
     { onConflict: "user_id,week_start" }
   );
