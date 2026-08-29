@@ -98,7 +98,7 @@ const BUILTIN_STICKERS = {
 
 export { BUILTIN_STICKERS };
 
-export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange }) {
+export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange, onStickerTapPlace }) {
   const [open, setOpen] = useState(false);
   const [draggingSticker, setDraggingSticker] = useState(null);
   const fileInputRef = useRef(null);
@@ -158,6 +158,14 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
     e.dataTransfer.effectAllowed = "copy";
   };
 
+  // Tap-to-place for touch: tapping a sticker places it in center of journal
+  const handleTapPlace = (stickerType, isCustom = false) => {
+    if (onStickerTapPlace) {
+      onStickerTapPlace(stickerType, isCustom);
+    }
+    setOpen(false);
+  };
+
   return (
     <>
       {/* Toggle button — always visible in outer margin */}
@@ -202,8 +210,9 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
                 key={name}
                 draggable
                 onDragStart={(e) => handleDragStart(e, name)}
-                className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 transition-colors"
-                title={`Drag ${name}`}
+                onClick={() => handleTapPlace(name)}
+                className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors"
+                title={`Drag or tap ${name}`}
               >
                 <div className="w-7 h-7">{svg}</div>
               </div>
@@ -222,8 +231,9 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
                     key={cs.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, cs.id, true)}
-                    className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 transition-colors overflow-hidden"
-                    title={`Drag ${cs.name}`}
+                    onClick={() => handleTapPlace(cs.id, true)}
+                    className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors overflow-hidden"
+                    title={`Drag or tap ${cs.name}`}
                   >
                     <img
                       src={cs.imageDataUrl}

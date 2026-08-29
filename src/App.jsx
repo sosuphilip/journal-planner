@@ -16,6 +16,7 @@ import {
   getWeek,
   currentWeekStart,
   todayStr,
+  uid,
 } from "./store";
 import Auth from "./components/Auth";
 import Header from "./components/Header";
@@ -484,6 +485,22 @@ export default function App() {
       <StickerTray
         customStickers={store.customStickers}
         onCustomStickersChange={updateCustomStickers}
+        onStickerTapPlace={(stickerType, isCustom) => {
+          const wd = store.weeks[weekStart];
+          const day = wd?.days[selectedDayIndex];
+          if (!day) return;
+          const newSticker = {
+            id: uid(),
+            stickerType,
+            isCustom: isCustom || false,
+            x: 200,
+            y: 150,
+            width: 50,
+            height: 50,
+            rotation: 0,
+          };
+          updatePlacedStickers([...(day.placedStickers || []), newSticker]);
+        }}
       />
 
       {(weekData.days[selectedDayIndex]?.placedStickers || []).length > 0 && (
