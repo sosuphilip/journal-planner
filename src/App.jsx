@@ -367,63 +367,68 @@ export default function App() {
       </button>
 
       {/* ── Two-page notebook spread ──── */}
-      <div className="notebook-spread relative overflow-visible">
-        {/* ── Decorative tabs (pinned to notebook edges) ──── */}
-        <div
-          className="absolute no-interact"
-          style={{
-            left: 0,
-            top: "30%",
-            transform: "translateY(-50%) rotate(-90deg)",
-            transformOrigin: "center",
-            background: "var(--tab-2026-bg)",
-            padding: "4px 14px",
-            borderRadius: "0 0 8px 8px",
-            fontSize: "14px",
-            fontFamily: "var(--font-hand)",
-            fontWeight: 700,
-            color: "white",
-            letterSpacing: "2px",
-            pointerEvents: "none",
-          }}
-        >
-          2026
+      <div className="relative" style={{ width: '100%', height: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+        {/* ── Decorative tabs (pinned to notebook edges, overflow visible) ──── */}
+        <div className="notebook-tabs">
+          <div
+            className="absolute no-interact"
+            style={{
+              left: 0,
+              top: "30%",
+              transform: "translateY(-50%) rotate(-90deg)",
+              transformOrigin: "center",
+              background: "var(--tab-2026-bg)",
+              padding: "4px 14px",
+              borderRadius: "0 0 8px 8px",
+              fontSize: "14px",
+              fontFamily: "var(--font-hand)",
+              fontWeight: 700,
+              color: "white",
+              letterSpacing: "2px",
+              pointerEvents: "none",
+            }}
+          >
+            2026
+          </div>
+
+          <div
+            className="absolute no-interact"
+            style={{
+              left: 0,
+              top: "45%",
+              transform: "translateY(-50%) rotate(-90deg)",
+              transformOrigin: "center",
+              background: "var(--tab-date-bg)",
+              padding: "3px 10px",
+              borderRadius: "0 0 6px 6px",
+              fontSize: "11px",
+              fontFamily: "var(--font-hand)",
+              color: "white",
+              letterSpacing: "1px",
+              pointerEvents: "none",
+            }}
+          >
+            {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+          </div>
+
+          <div
+            className="absolute flex flex-col gap-1.5 no-interact"
+            style={{
+              right: 0,
+              top: "30%",
+              transform: "translateY(-50%)",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#e8a87c" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#7ca5c9" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#8cb88c" }} />
+          </div>
         </div>
 
-        <div
-          className="absolute no-interact"
-          style={{
-            left: 0,
-            top: "45%",
-            transform: "translateY(-50%) rotate(-90deg)",
-            transformOrigin: "center",
-            background: "var(--tab-date-bg)",
-            padding: "3px 10px",
-            borderRadius: "0 0 6px 6px",
-            fontSize: "11px",
-            fontFamily: "var(--font-hand)",
-            color: "white",
-            letterSpacing: "1px",
-            pointerEvents: "none",
-          }}
-        >
-          {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-        </div>
-
-        <div
-          className="absolute flex flex-col gap-1.5 no-interact"
-          style={{
-            right: 0,
-            top: "30%",
-            transform: "translateY(-50%)",
-            pointerEvents: "none",
-          }}
-        >
-          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#e8a87c" }} />
-          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#7ca5c9" }} />
-          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#8cb88c" }} />
-        </div>
-        <div className="notebook-grid h-full w-full">
+        {/* Notebook pages (overflow:hidden for scroll) */}
+        <div className="notebook-spread">
+          <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
             className={`relative flex flex-col page-shadow-left ${mobileView !== "days" ? "mobile-hidden" : ""}`}
@@ -507,6 +512,7 @@ export default function App() {
               />
             </div>
           </div>
+        </div>
         </div>
       </div>
 

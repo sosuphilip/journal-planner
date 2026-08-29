@@ -483,6 +483,15 @@ textarea:focus, input[type="text"]:focus {
   height: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Tab wrapper — sits next to notebook-spread, allows tabs to extend outside */
+.notebook-tabs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
 }
 
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
