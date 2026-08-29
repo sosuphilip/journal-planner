@@ -412,6 +412,7 @@ textarea:focus, input[type="text"]:focus {
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
 .page-scroll {
   overflow: hidden;
+  min-height: 0;
 }
 
 @media (max-height: 500px) and (orientation: landscape) {
