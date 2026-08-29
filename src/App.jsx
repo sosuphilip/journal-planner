@@ -178,7 +178,19 @@ export default function App() {
 
   // Mobile view toggle: "days" or "journal"
   const [mobileView, setMobileView] = useState("days");
-  const isMobileLandscape = typeof window !== "undefined" && window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+  const [isMobileLandscape, setIsMobileLandscape] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+  });
+
+  // Update on resize/orientation change
+  useEffect(() => {
+    const check = () => {
+      setIsMobileLandscape(window.innerWidth > window.innerHeight && window.innerHeight <= 500);
+    };
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Initialize selected day to today if in current week, else 0 (only on first load)
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
