@@ -89,6 +89,7 @@ export default function App() {
   const today = todayStr();
   const storeRef = useRef(store);
   useEffect(() => { storeRef.current = store; });
+  const rightPageRef = useRef(null);
 
   // Theme state — persists to localStorage, respects system preference
   const [dark, setDark] = useState(() => {
@@ -460,7 +461,7 @@ export default function App() {
           >
             <Doodles />
 
-            <div className="flex-1 min-h-0 overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div ref={rightPageRef} className="flex-1 min-h-0 overflow-y-auto relative" style={{ WebkitOverflowScrolling: "touch" }}>
               <div className="flex flex-col gap-3 px-4 pt-3 pb-1 md:flex-row">
                 <div className="flex-1 min-w-0">
                   <JournalPanel
@@ -487,16 +488,16 @@ export default function App() {
                 />
               </div>
             </div>
+
+            <StickerLayer
+              placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
+              onPlacedChange={updatePlacedStickers}
+              customStickers={store.customStickers}
+              containerRef={rightPageRef}
+            />
           </div>
         </div>
-
       </div>
-
-      <StickerLayer
-        placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
-        onPlacedChange={updatePlacedStickers}
-        customStickers={store.customStickers}
-      />
 
       {/* ── Mobile bottom nav (only visible on small screens) ──── */}
       <div className="mobile-nav">
@@ -527,8 +528,8 @@ export default function App() {
             id: uid(),
             stickerType,
             isCustom: isCustom || false,
-            x: 200,
-            y: 150,
+            xP: 40,
+            yP: 30,
             width: 50,
             height: 50,
             rotation: 0,

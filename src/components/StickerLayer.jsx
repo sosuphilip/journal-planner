@@ -1,8 +1,7 @@
 /* ========================================
-   STICKER LAYER — rendered above page content
-   Uses position:fixed so stickers stay pinned to the viewport.
-   Handles placement, drag, resize, rotate, delete.
-   Supports both mouse and touch interactions.
+   STICKER LAYER — rendered inside the right page scroll area
+   Uses position:absolute so stickers scroll with content.
+   Stores positions as viewport percentages for orientation resilience.
    ======================================== */
 import React, { useState, useRef, useEffect } from "react";
 import { uid } from "../store";
@@ -15,18 +14,36 @@ function clientXY(e) {
   return { x: e.clientX, y: e.clientY };
 }
 
-export default function StickerLayer({ placedStickers, onPlacedChange, customStickers }) {
+export default function StickerLayer({ placedStickers, onPlacedChange, customStickers, containerRef }) {
   const [selectedId, setSelectedId] = useState(null);
   const dragRef = useRef({});
   const stickersRef = useRef(placedStickers);
   useEffect(() => { stickersRef.current = placedStickers; }, [placedStickers]);
 
+  // Convert viewport pixels to percentage of container, and back
+  const toPercent = (vx, vy) => {
+    const el = containerRef?.current;
+    if (!el) return { xP: vx, yP: vy };
+    const rect = el.getBoundingClientRect();
+    return {
+      xP: ((vx - rect.left) / rect.width) * 100,
+      yP: ((vy - rect.top + el.scrollTop) / rect.height) * 100,
+    };
+  };
+  const toPixels = (xP, yP) => {
+    const el = containerRef?.current;
+    if (!el) return { x: xP, y: yP };
+    const rect = el.getBoundingClientRect();
+    return {
+      x: (xP / 100) * rect.width + rect.left,
+      y: (yP / 100) * rect.height + rect.top - el.scrollTop,
+    };
+  };
+
   const getStickerContent = (sticker) => {
     if (sticker.isCustom) {
       const custom = customStickers.find((cs) => cs.id === sticker.stickerType);
-      if (custom) {
-        return <img src={custom.imageDataUrl} alt={custom.name} className="w-full h-full object-contain" draggable={false} />;
-      }
+      if (custom) return <img src={custom.imageDataUrl} alt={custom.name} className="w-full h-full object-contain" draggable={false} />;
       return null;
     }
     const svg = BUILTIN_STICKERS[sticker.stickerType];
@@ -41,14 +58,19 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     setSelectedId(id);
     const { x: cx, y: cy } = clientXY(e);
     const sticker = stickersRef.current.find((s) => s.id === id);
-    dragRef.current = { id, startX: cx, startY: cy, origX: sticker.x, origY: sticker.y };
+    dragRef.current = { id, startX: cx, startY: cy, origXP: sticker.xP, origYP: sticker.yP };
 
     const onMove = (e) => {
       const { x: cx, y: cy } = clientXY(e);
       const dx = cx - dragRef.current.startX;
       const dy = cy - dragRef.current.startY;
+      const el = containerRef?.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const dxP = (dx / rect.width) * 100;
+      const dyP = (dy / rect.height) * 100;
       onPlacedChange(stickersRef.current.map((s) =>
-        s.id === id ? { ...s, x: dragRef.current.origX + dx, y: dragRef.current.origY + dy } : s
+        s.id === id ? { ...s, xP: dragRef.current.origXP + dxP, yP: dragRef.current.origYP + dyP } : s
       ));
     };
     const onUp = () => {
@@ -70,7 +92,6 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const sticker = stickersRef.current.find((s) => s.id === id);
     const { x: startX } = clientXY(e);
     const origW = sticker.width;
-
     const onMove = (e) => {
       const { x: cx } = clientXY(e);
       const dx = cx - startX;
@@ -96,15 +117,18 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     e.stopPropagation();
     e.preventDefault();
     const sticker = stickersRef.current.find((s) => s.id === id);
-    const centerX = sticker.x + sticker.width / 2;
-    const centerY = sticker.y + sticker.height / 2;
+    const el = containerRef?.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const centerX = (sticker.xP / 100) * rect.width + sticker.width / 2;
+    const centerY = (sticker.yP / 100) * rect.height + sticker.height / 2;
     const { x: cx, y: cy } = clientXY(e);
-    const startAngle = Math.atan2(cy - centerY, cx - centerX);
+    const startAngle = Math.atan2(cy - rect.top - centerY, cx - rect.left - centerX);
     const origRotation = sticker.rotation || 0;
 
     const onMove = (e) => {
       const { x: cx, y: cy } = clientXY(e);
-      const angle = Math.atan2(cy - centerY, cx - centerX);
+      const angle = Math.atan2(cy - rect.top - centerY, cx - rect.left - centerX);
       const delta = ((angle - startAngle) * 180) / Math.PI;
       onPlacedChange(stickersRef.current.map((s) =>
         s.id === id ? { ...s, rotation: origRotation + delta } : s
@@ -168,10 +192,10 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const data = e.dataTransfer?.getData("application/sticker");
     if (!data) return;
     const { stickerType, isCustom } = JSON.parse(data);
+    const { xP, yP } = toPercent(e.clientX, e.clientY);
     onPlacedChange([...stickersRef.current, {
       id: uid(), stickerType, isCustom: isCustom || false,
-      x: e.clientX - 25, y: e.clientY - 25,
-      width: 50, height: 50, rotation: 0,
+      xP, yP, width: 50, height: 50, rotation: 0,
     }]);
   };
 
@@ -182,11 +206,12 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   return (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
         inset: 0,
         zIndex: 50,
         pointerEvents: isDragActive ? "auto" : "none",
         userSelect: "none",
+        overflow: "visible",
       }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -195,13 +220,24 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
         const isSelected = selectedId === sticker.id;
         const isNew = !animatedRef.current.has(sticker.id);
         if (isNew) animatedRef.current.add(sticker.id);
+
+        // Convert percentage back to pixel offset for rendering
+        const el = containerRef?.current;
+        let renderLeft = sticker.xP || 0;
+        let renderTop = sticker.yP || 0;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          renderLeft = (sticker.xP / 100) * rect.width;
+          renderTop = (sticker.yP / 100) * rect.height;
+        }
+
         return (
           <div
             key={sticker.id}
             style={{
-              position: "fixed",
-              left: sticker.x,
-              top: sticker.y,
+              position: "absolute",
+              left: `${sticker.xP}%`,
+              top: `${sticker.yP}%`,
               width: sticker.width,
               height: sticker.height,
               transform: `rotate(${sticker.rotation || 0}deg)`,
