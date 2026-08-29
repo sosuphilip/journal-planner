@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS weeks (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   week_start TEXT NOT NULL,
   days_data JSONB NOT NULL DEFAULT '[]'::jsonb,
+  habits_data JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(user_id, week_start)

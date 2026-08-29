@@ -43,7 +43,7 @@ export async function loadCloudStore(userId) {
   let weeks = {};
   if (weeksResult.status === "fulfilled" && weeksResult.value.data) {
     for (const row of weeksResult.value.data) {
-      weeks[row.week_start] = { days: row.days_data };
+      weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [] };
     }
   }
 
@@ -78,6 +78,7 @@ export async function saveWeek(userId, weekStart, weekData) {
       user_id: userId,
       week_start: weekStart,
       days_data: weekData.days,
+      habits_data: weekData.habits || [],
     },
     { onConflict: "user_id,week_start" }
   );

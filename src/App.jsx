@@ -261,9 +261,14 @@ export default function App() {
 
   const updateHabits = useCallback(
     (newHabits) => {
-      setStore((prev) => (prev ? { ...prev, habits: newHabits } : prev));
+      setStore((prev) => {
+        if (!prev) return prev;
+        const wd = prev.weeks[weekStart];
+        if (!wd) return prev;
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, habits: newHabits } } };
+      });
     },
-    []
+    [weekStart]
   );
 
   const updateWater = useCallback(
@@ -424,7 +429,7 @@ export default function App() {
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
             </div>
 
-            <div className="flex-1 flex flex-col px-2 pb-2 overflow-hidden no-scrollbar">
+            <div className="flex-1 flex flex-col px-2 pb-2 overflow-y-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" }}>
               {weekData.days.map((day, idx) => (
                 <DayRow
                   key={day.date}
@@ -457,30 +462,32 @@ export default function App() {
           >
             <Doodles />
 
-            <div className="flex flex-col flex-[0.55] min-h-0 gap-3 px-4 pt-3 pb-1 md:flex-row">
-              <div className="flex-1 min-w-0">
-                <JournalPanel
-                  key={weekData.days[selectedDayIndex]?.date}
-                  day={weekData.days[selectedDayIndex]}
-                  onDayUpdate={(newDay) => updateDay(selectedDayIndex, newDay)}
+            <div className="flex-1 min-h-0 overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+              <div className="flex flex-col gap-3 px-4 pt-3 pb-1 md:flex-row">
+                <div className="flex-1 min-w-0">
+                  <JournalPanel
+                    key={weekData.days[selectedDayIndex]?.date}
+                    day={weekData.days[selectedDayIndex]}
+                    onDayUpdate={(newDay) => updateDay(selectedDayIndex, newDay)}
+                  />
+                </div>
+
+                <div className="w-full md:w-[42%] shrink-0">
+                  <TodoCard data={store.todoCard} onUpdate={updateTodoCard} />
+                </div>
+              </div>
+
+              <div className="mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
+
+              <div className="px-4 pt-2 pb-3">
+                <HabitAreas
+                  habits={weekData.habits || []}
+                  waterTrack={store.waterTrack}
+                  weekStart={weekStart}
+                  onHabitsChange={updateHabits}
+                  onWaterChange={updateWater}
                 />
               </div>
-
-              <div className="w-full md:w-[42%] shrink-0">
-                <TodoCard data={store.todoCard} onUpdate={updateTodoCard} />
-              </div>
-            </div>
-
-            <div className="mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
-
-            <div className="flex-[0.42] min-h-0 px-4 pt-2 pb-3 overflow-hidden">
-              <HabitAreas
-                habits={store.habits}
-                waterTrack={store.waterTrack}
-                weekStart={weekStart}
-                onHabitsChange={updateHabits}
-                onWaterChange={updateWater}
-              />
             </div>
           </div>
         </div>

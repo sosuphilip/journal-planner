@@ -82,7 +82,16 @@ function blankWeek(weekStartStr) {
     };
   });
 
-  return { days };
+  return {
+    days,
+    habits: [
+      { id: uid(), name: "dance", days: [false, false, false, false, false, false, false] },
+      { id: uid(), name: "gym", days: [false, false, false, false, false, false, false] },
+      { id: uid(), name: "stretch", days: [false, false, false, false, false, false, false] },
+      { id: uid(), name: "game", days: [false, false, false, false, false, false, false] },
+      { id: uid(), name: "calisthenics", days: [false, false, false, false, false, false, false] },
+    ],
+  };
 }
 
 // ── Seed data for week 2026-08-17 ────────────────────────
