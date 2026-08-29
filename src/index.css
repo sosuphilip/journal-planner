@@ -487,12 +487,12 @@ textarea:focus, input[type="text"]:focus {
 /* App shell — safe area padding goes here */
 .app-shell {
   width: 100%;
-  height: var(--vh, 100%);
+  height: 100dvh;
 }
 
 .notebook-spread {
   width: 100%;
-  height: var(--vh, 100%);
+  height: 100%;
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
@@ -538,6 +538,11 @@ textarea:focus, input[type="text"]:focus {
 
   .mobile-hidden {
     display: none !important;
+  }
+
+  /* Account for bottom nav height */
+  .notebook-spread {
+    height: calc(100dvh - 60px) !important;
   }
 
   /* Move sticker tray button above the bottom nav */
