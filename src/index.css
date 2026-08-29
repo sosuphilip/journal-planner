@@ -112,6 +112,14 @@ html, body, #root {
   font-size: 17px;
   touch-action: manipulation;
   -webkit-overflow-scrolling: auto;
+  overscroll-behavior: none;
+}
+
+/* Prevent iOS elastic bounce on the outer container */
+body {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
 }
 
 /* Prevent iOS auto-scroll to focused input */
