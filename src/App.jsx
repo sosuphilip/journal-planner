@@ -461,7 +461,7 @@ export default function App() {
           >
             <Doodles />
 
-            <div ref={rightPageRef} className="flex-1 min-h-0 relative overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div ref={rightPageRef} className="flex-1 min-h-0 relative" style={{ overflow: isMobileLandscape ? "hidden" : "auto", WebkitOverflowScrolling: "touch" }}>
               <div className="flex flex-col gap-1 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
                 <div className="flex-1 min-w-0">
                   <JournalPanel
