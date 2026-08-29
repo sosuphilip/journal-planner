@@ -409,6 +409,18 @@ textarea:focus, input[type="text"]:focus {
   max-width: 1400px;
 }
 
+/* Pages: hidden overflow on desktop, scrollable on mobile */
+.page-scroll {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .page-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 @media (max-height: 500px) and (orientation: landscape) {
   .notebook-spread {
     width: calc(100vw - 24px);
@@ -523,8 +535,5 @@ textarea:focus, input[type="text"]:focus {
     display: flex !important;
   }
 
-  /* Allow both pages to scroll vertically */
-  .page-scroll {
-    overflow-y: auto !important;
-  }
+
 }
