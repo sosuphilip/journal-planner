@@ -455,7 +455,7 @@ export default function App() {
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
             </div>
 
-            <div className="flex-1 flex flex-col px-1 md:px-2 pb-1 md:pb-2 overflow-y-auto no-scrollbar" style={{ touchAction: 'pan-y' }}>
+            <div className="flex-1 flex flex-col px-1 md:px-2 pb-1 md:pb-2 overflow-y-auto no-scrollbar">
               {weekData.days.map((day, idx) => (
                 <DayRow
                   key={day.date}
@@ -487,7 +487,7 @@ export default function App() {
           >
             <Doodles />
 
-            <div ref={rightPageRef} className="flex-1 min-h-0 relative no-scrollbar" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+            <div ref={rightPageRef} className="flex-1 min-h-0 relative no-scrollbar" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
               <div className="flex flex-col gap-1 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
                 <div className="flex-1 min-w-0">
                   <JournalPanel
