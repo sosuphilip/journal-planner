@@ -421,8 +421,7 @@ export default function App() {
               borderRight: "1px solid var(--page-border)",
               transition: "background-color 0.3s ease, border-color 0.3s ease",
               minHeight: 0,
-              overflow: isMobileLandscape ? "auto" : "hidden",
-              WebkitOverflowScrolling: "touch",
+              overflow: "hidden",
             }}
           >
             <div className="px-4 pt-3 pb-1">
@@ -456,8 +455,7 @@ export default function App() {
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
               minHeight: 0,
-              overflow: isMobileLandscape ? "auto" : "hidden",
-              WebkitOverflowScrolling: "touch",
+              overflow: "hidden",
             }}
           >
             <Doodles />
