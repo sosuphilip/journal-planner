@@ -47,7 +47,7 @@ root.addEventListener('touchmove', (e) => {
   if (e.touches.length === 2) {
     e.preventDefault();
     const dist = getDistance(e.touches[0], e.touches[1]);
-    currentScale = Math.min(Math.max(pinchStartScale * (dist / pinchStartDist), 0.5), 3);
+    currentScale = Math.min(Math.max(pinchStartScale * (dist / pinchStartDist), 1), 3);
     root.style.transform = `scale(${currentScale})`;
   }
 }, { passive: false });
