@@ -324,7 +324,7 @@ export default function App() {
   // Show auth screen if not logged in
   if (authLoading) {
     return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg)" }}>
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg)" }}>
         <span className="font-hand text-lg" style={{ color: "var(--text-muted)" }}>Loading...</span>
         <button
           onClick={() => window.location.reload()}
@@ -344,14 +344,14 @@ export default function App() {
   // Show loading while data loads
   if (dataLoading || !store) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div className="w-full h-full flex items-center justify-center" style={{ background: "var(--bg)" }}>
         <span className="font-hand text-lg" style={{ color: "var(--text-muted)" }}>Loading your journal...</span>
       </div>
     );
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
+    <div className="w-full h-full overflow-hidden flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
       {/* Sign out button */}
       <button
         onClick={handleSignOut}
