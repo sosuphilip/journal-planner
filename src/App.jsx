@@ -351,7 +351,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden" style={{ background: "var(--page)" }}>
+    <div className="w-screen h-screen overflow-hidden flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
       {/* Sign out button */}
       <button
         onClick={handleSignOut}
