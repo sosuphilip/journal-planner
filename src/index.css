@@ -443,6 +443,16 @@ textarea:focus, input[type="text"]:focus {
   .mobile-hidden {
     display: none !important;
   }
+
+  /* Move sticker tray button above the bottom nav */
+  .sticker-tray.fixed {
+    bottom: 60px !important;
+  }
+
+  /* Move sticker tray panel above bottom nav too */
+  .sticker-tray.fixed[style*="bottom: 16"] {
+    bottom: 110px !important;
+  }
 }
 
 /* ========================================
@@ -492,5 +502,24 @@ textarea:focus, input[type="text"]:focus {
   /* Give room for bottom nav */
   .notebook-spread {
     height: calc(100vh - 60px) !important;
+  }
+}
+
+/* Mobile landscape — no bottom nav, use full height */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-nav {
+    display: none !important;
+  }
+
+  .notebook-spread {
+    height: calc(100vh - 16px) !important;
+  }
+
+  .notebook-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mobile-hidden {
+    display: flex !important;
   }
 }
