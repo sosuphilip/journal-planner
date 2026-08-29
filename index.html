@@ -11,13 +11,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
     <script>
-      // Set --vh and dark mode BEFORE CSS evaluates so theme is correct on first paint
+      // Set --vh, dark mode, and status bar style BEFORE CSS evaluates
       (function() {
         var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         document.documentElement.style.setProperty('--vh', vh + 'px');
         var saved = localStorage.getItem('planner-theme');
         var isDark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDark) document.documentElement.classList.add('dark');
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+          // Set status bar to dark at launch (iOS reads this once)
+          var m = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+          if (m) m.content = 'black';
+          var t = document.getElementById('theme-color');
+          if (t) t.content = '#1c1815';
+        }
       })();
     </script>
   </head>
