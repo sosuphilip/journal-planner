@@ -375,7 +375,7 @@ export default function App() {
   }
 
   return (
-    <div className="overflow-hidden relative" style={{ background: "var(--bg)", width: '100vw', height: vh }}>
+    <div className="w-full overflow-hidden relative" style={{ background: "var(--bg)", height: vh }}>
       {/* Sign out button */}
       <button
         onClick={handleSignOut}
