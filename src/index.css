@@ -477,8 +477,6 @@ textarea:focus, input[type="text"]:focus {
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
-  outline: 2px solid red;
-  outline-offset: -2px;
 }
 
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
@@ -604,15 +602,16 @@ textarea:focus, input[type="text"]:focus {
   /* Bottom nav takes 60px — inline style handles this via JS */
 }
 
-/* Mobile landscape — no bottom nav, show both pages side by side */
+/* Mobile landscape — no bottom nav, show both pages side by side.
+   Account for notch safe areas on iPhones. */
 @media (max-height: 500px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
   }
 
   .notebook-spread {
-    height: 100% !important;
     width: 100% !important;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
   .notebook-grid {
