@@ -102,14 +102,29 @@
 html, body, #root {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   background: var(--bg);
   font-family: var(--font-hand);
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 17px;
+}
+
+/* Fix iOS centering: prevent address bar from shifting layout */
+html {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Dark mode: stronger page shadows for depth */
