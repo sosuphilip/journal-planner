@@ -370,11 +370,11 @@ export default function App() {
       <div className="relative" style={{ width: '100%', height: '100%', maxWidth: '1400px', margin: '0 auto' }}>
         {/* ── Decorative tabs (pinned to notebook edges, overflow visible) ──── */}
         <div className="notebook-tabs">
-          {/* Left tabs — hang off the left edge into background */}
+          {/* Right-side tabs — hang off the right edge into background */}
           <div
             className="absolute no-interact"
             style={{
-              left: -48,
+              right: -48,
               top: "30%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
@@ -395,7 +395,7 @@ export default function App() {
           <div
             className="absolute no-interact"
             style={{
-              left: -40,
+              right: -40,
               top: "45%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
@@ -412,12 +412,12 @@ export default function App() {
             {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </div>
 
-          {/* Right squares — hang off the right edge into background */}
+          {/* Right squares — hang off the right edge, below the text tabs */}
           <div
             className="absolute flex flex-col gap-1.5 no-interact"
             style={{
               right: -14,
-              top: "30%",
+              top: "58%",
               transform: "translateY(-50%)",
               pointerEvents: "none",
             }}
