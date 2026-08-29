@@ -105,11 +105,18 @@ html, body, #root {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  overflow-x: hidden;
   background: var(--bg);
   font-family: var(--font-hand);
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 17px;
+}
+
+/* Prevent any horizontal overflow on mobile */
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Dark mode: stronger page shadows for depth */
