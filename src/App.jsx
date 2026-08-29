@@ -366,64 +366,63 @@ export default function App() {
         sign out
       </button>
 
-      {/* ── Outer tabs (decorative, non-interactive) ──── */}
-      <div
-        className="absolute no-interact"
-        style={{
-          left: 0,
-          top: "30%",
-          transform: "translateY(-50%) rotate(-90deg)",
-          transformOrigin: "center",
-          background: "var(--tab-2026-bg)",
-          padding: "4px 14px",
-          borderRadius: "0 0 8px 8px",
-          fontSize: "14px",
-          fontFamily: "var(--font-hand)",
-          fontWeight: 700,
-          color: "white",
-          letterSpacing: "2px",
-          pointerEvents: "none",
-        }}
-      >
-        2026
-      </div>
-
-      <div
-        className="absolute no-interact"
-        style={{
-          left: 0,
-          top: "45%",
-          transform: "translateY(-50%) rotate(-90deg)",
-          transformOrigin: "center",
-          background: "var(--tab-date-bg)",
-          padding: "3px 10px",
-          borderRadius: "0 0 6px 6px",
-          fontSize: "11px",
-          fontFamily: "var(--font-hand)",
-          color: "white",
-          letterSpacing: "1px",
-          pointerEvents: "none",
-        }}
-      >
-        {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-      </div>
-
-      <div
-        className="absolute flex flex-col gap-1.5 no-interact"
-        style={{
-          right: 0,
-          top: "30%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-        }}
-      >
-        <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#e8a87c" }} />
-        <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#7ca5c9" }} />
-        <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#8cb88c" }} />
-      </div>
-
       {/* ── Two-page notebook spread ──── */}
-      <div className="notebook-spread relative">
+      <div className="notebook-spread relative overflow-visible">
+        {/* ── Decorative tabs (pinned to notebook edges) ──── */}
+        <div
+          className="absolute no-interact"
+          style={{
+            left: 0,
+            top: "30%",
+            transform: "translateY(-50%) rotate(-90deg)",
+            transformOrigin: "center",
+            background: "var(--tab-2026-bg)",
+            padding: "4px 14px",
+            borderRadius: "0 0 8px 8px",
+            fontSize: "14px",
+            fontFamily: "var(--font-hand)",
+            fontWeight: 700,
+            color: "white",
+            letterSpacing: "2px",
+            pointerEvents: "none",
+          }}
+        >
+          2026
+        </div>
+
+        <div
+          className="absolute no-interact"
+          style={{
+            left: 0,
+            top: "45%",
+            transform: "translateY(-50%) rotate(-90deg)",
+            transformOrigin: "center",
+            background: "var(--tab-date-bg)",
+            padding: "3px 10px",
+            borderRadius: "0 0 6px 6px",
+            fontSize: "11px",
+            fontFamily: "var(--font-hand)",
+            color: "white",
+            letterSpacing: "1px",
+            pointerEvents: "none",
+          }}
+        >
+          {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+        </div>
+
+        <div
+          className="absolute flex flex-col gap-1.5 no-interact"
+          style={{
+            right: 0,
+            top: "30%",
+            transform: "translateY(-50%)",
+            pointerEvents: "none",
+          }}
+        >
+          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#e8a87c" }} />
+          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#7ca5c9" }} />
+          <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#8cb88c" }} />
+        </div>
         <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div

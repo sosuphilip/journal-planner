@@ -483,7 +483,6 @@ textarea:focus, input[type="text"]:focus {
   height: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  overflow: hidden;
 }
 
 /* Pages: hidden overflow on desktop, scrollable on mobile landscape */
