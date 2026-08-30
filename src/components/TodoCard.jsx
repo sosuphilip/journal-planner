@@ -19,7 +19,8 @@ export default function TodoCard({ data, onUpdate }) {
 
   return (
     <div
-      className="rounded-lg p-3 relative transition-shadow duration-200"
+      className="rounded-lg relative transition-shadow duration-200"
+      style={{ padding: 'clamp(8px, 2vw, 12px)' }}
       style={{
         background: "var(--card-bg)",
         border: "1.5px dashed var(--card-border)",

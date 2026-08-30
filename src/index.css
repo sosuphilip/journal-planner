@@ -413,6 +413,23 @@ textarea:focus, input[type="text"]:focus {
 }
 
 /* ========================================
+   FLUID SIZING — clamp() scales smoothly between breakpoints
+   ======================================== */
+
+/* Base font: scales from 13px (small mobile) → 17px (desktop) */
+html, body, #root {
+  font-size: clamp(13px, 1.1vw + 0.5rem, 17px);
+}
+
+/* Small phones portrait — floor size */
+@media (max-width: 500px) and (orientation: portrait) {
+  html, body, #root {
+    font-size: 15px;
+    overflow: auto;
+  }
+}
+
+/* ========================================
    MOBILE LANDSCAPE (phones in horizontal) — ultra compact
    ======================================== */
 @media (max-height: 500px) and (orientation: landscape) {
@@ -437,60 +454,50 @@ textarea:focus, input[type="text"]:focus {
     height: 10px;
   }
 
-
-
   textarea, input {
     font-size: 16px !important;
   }
-}
 
-/* Small phones portrait */
-@media (max-width: 500px) and (orientation: portrait) {
-  html, body, #root {
-    font-size: 15px;
-    overflow: auto;
+  /* Slightly favor right page in landscape too */
+  .notebook-grid {
+    grid-template-columns: 1fr 1.4fr;
   }
 }
 
 /* ========================================
-   MOBILE COMPACT — make everything fit without scrolling
+   MOBILE COMPACT — fluid scaling instead of hard breakpoints
    ======================================== */
 @media (max-width: 768px) {
-  /* Shrink everything */
-  html { font-size: 13px; }
-
-  /* Day rows */
+  /* Day rows — fluid min-height */
   .day-row {
     padding-top: 1px !important;
     padding-bottom: 1px !important;
-    min-height: 1.3rem !important;
-    gap: 0.25rem !important;
+    min-height: clamp(1.1rem, 2.5vw, 1.3rem) !important;
+    gap: clamp(0.15rem, 0.5vw, 0.25rem) !important;
   }
 
-  /* Habit cells */
+  /* Habit cells — fluid size */
   .habit-cell {
-    width: 1rem;
-    height: 1rem;
+    width: clamp(0.9rem, 2.5vw, 1rem);
+    height: clamp(0.9rem, 2.5vw, 1rem);
   }
 
-  /* Water drops */
+  /* Water drops — fluid size */
   .water-drop {
-    width: 8px;
-    height: 11px;
+    width: clamp(7px, 2vw, 8px);
+    height: clamp(10px, 2.5vw, 11px);
   }
-
-
 
   /* Journal textarea — keep >=16px to prevent iOS auto-zoom */
   textarea {
-    min-height: 40px !important;
+    min-height: clamp(36px, 10vw, 40px) !important;
     font-size: 16px !important;
-    padding: 4px !important;
+    padding: clamp(3px, 1vw, 4px) !important;
   }
 
-  /* Section headers */
+  /* Section headers — fluid */
   .font-hand.text-base.font-bold {
-    font-size: 11px !important;
+    font-size: clamp(10px, 2.8vw, 11px) !important;
   }
 }
 
@@ -539,7 +546,8 @@ textarea:focus, input[type="text"]:focus {
    ======================================== */
 .notebook-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Right page (journal) gets ~62% of width by default */
+  grid-template-columns: 1fr 1.6fr;
   gap: 0;
 }
 
@@ -666,7 +674,7 @@ textarea:focus, input[type="text"]:focus {
   }
 
   .notebook-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.4fr;
   }
 
   .mobile-hidden {
