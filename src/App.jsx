@@ -364,14 +364,28 @@ export default function App() {
     []
   );
 
-  const updatePlacedStickers = useCallback(
+  const updateLeftPlacedStickers = useCallback(
     (newPlaced) => {
       setStore((prev) => {
         if (!prev) return prev;
         const wd = prev.weeks[weekStart];
         if (!wd) return prev;
         const newDays = [...wd.days];
-        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], placedStickers: newPlaced };
+        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], leftPlacedStickers: newPlaced };
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
+      });
+    },
+    [weekStart, selectedDayIndex]
+  );
+
+  const updateRightPlacedStickers = useCallback(
+    (newPlaced) => {
+      setStore((prev) => {
+        if (!prev) return prev;
+        const wd = prev.weeks[weekStart];
+        if (!wd) return prev;
+        const newDays = [...wd.days];
+        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], rightPlacedStickers: newPlaced };
         return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
       });
     },
@@ -553,8 +567,8 @@ export default function App() {
                 />
               ))}
               <StickerLayer
-                placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
-                onPlacedChange={updatePlacedStickers}
+                placedStickers={weekData.days[selectedDayIndex]?.leftPlacedStickers || []}
+                onPlacedChange={updateLeftPlacedStickers}
                 customStickers={store.customStickers}
                 containerRef={leftPageRef}
               />
@@ -602,8 +616,8 @@ export default function App() {
               </div>
 
               <StickerLayer
-                placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
-                onPlacedChange={updatePlacedStickers}
+                placedStickers={weekData.days[selectedDayIndex]?.rightPlacedStickers || []}
+                onPlacedChange={updateRightPlacedStickers}
                 customStickers={store.customStickers}
                 containerRef={rightPageRef}
               />
@@ -648,7 +662,7 @@ export default function App() {
             height: 50,
             rotation: 0,
           };
-          updatePlacedStickers([...(day.placedStickers || []), newSticker]);
+          updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
         }}
       />
 

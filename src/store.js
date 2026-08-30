@@ -78,6 +78,8 @@ function blankWeek(weekStartStr) {
       specialNote: "",
       dateCircled: false,
       dateSticker: null,      placedStickers: [],
+      leftPlacedStickers: [],
+      rightPlacedStickers: [],
       todoCard: { title: "todo list", items: [] },
     };
   });
