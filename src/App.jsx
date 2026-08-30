@@ -522,19 +522,18 @@ export default function App() {
             {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </div>
 
-          {/* Right squares — hang off the right edge, below the text tabs */}
+          {/* Colored squares — top left edge */}
           <div
             className="absolute flex flex-col gap-1.5 no-interact"
             style={{
-              right: -14,
-              top: "48%",
-              transform: "translateY(-50%)",
+              left: -14,
+              top: "12%",
               pointerEvents: "none",
             }}
           >
-            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#e8a87c" }} />
-            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#7ca5c9" }} />
-            <div style={{ width: 12, height: 12, borderRadius: "0 4px 4px 0", background: "#8cb88c" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "4px 0 0 4px", background: "#e8a87c" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "4px 0 0 4px", background: "#7ca5c9" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "4px 0 0 4px", background: "#8cb88c" }} />
           </div>
         </div>
 
