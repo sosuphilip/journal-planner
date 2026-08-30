@@ -542,6 +542,35 @@ html, body, #root {
 
 
 /* ========================================
+   RIGHT PAGE — flex column on desktop so journal fills height
+   ======================================== */
+.right-scroll-area {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop: journal+todo stretches to fill, habits stays natural */
+@media (min-width: 769px) {
+  .right-scroll-area {
+    overflow: hidden;
+  }
+  .right-top-section {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+/* Mobile: stack everything and scroll */
+@media (max-width: 768px) {
+  .right-top-section {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ========================================
    NOTEBOOK GRID — side-by-side on desktop, stacked on mobile
    ======================================== */
 .notebook-grid {

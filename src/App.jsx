@@ -595,9 +595,10 @@ export default function App() {
           >
             <Doodles />
 
-            <div ref={rightPageRef} className="flex-1 min-h-0 relative no-scrollbar" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              <div className="flex flex-col gap-1 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
-                <div className="flex-1 min-w-0">
+            <div ref={rightPageRef} className="right-scroll-area flex-1 min-h-0 relative no-scrollbar">
+              {/* Top section: Journal + Todo — fills remaining vertical space on desktop */}
+              <div className="right-top-section flex-1 min-h-0 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
+                <div className="flex-1 min-w-0 h-full">
                   <JournalPanel
                     key={weekData.days[selectedDayIndex]?.date}
                     day={weekData.days[selectedDayIndex]}
@@ -610,8 +611,10 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Dashed divider */}
               <div className="mx-3 md:mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
 
+              {/* Bottom section: Habits — natural size */}
               <div className="px-3 md:px-4 pt-1 md:pt-2 pb-1 md:pb-3">
                 <HabitAreas
                   habits={weekData.habits || []}
