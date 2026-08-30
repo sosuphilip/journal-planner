@@ -27,7 +27,6 @@ import TodoCard from "./components/TodoCard";
 import HabitAreas from "./components/HabitAreas";
 import StickerTray from "./components/StickerTray";
 import StickerLayer from "./components/StickerLayer";
-import ResizeHandle from "./components/ResizeHandle";
 
 /* ── Static decorative doodles (SVG, pointer-events: none) ────── */
 function Doodles() {
@@ -399,24 +398,6 @@ export default function App() {
     [weekStart, selectedDayIndex]
   );
 
-  const updateResize = useCallback(
-    (topHeightPct, journalWidthPct) => {
-      setStore((prev) => {
-        if (!prev) return prev;
-        const wd = prev.weeks[weekStart];
-        if (!wd) return prev;
-        const newDays = [...wd.days];
-        newDays[selectedDayIndex] = {
-          ...newDays[selectedDayIndex],
-          topHeight: topHeightPct,
-          journalWidth: journalWidthPct,
-        };
-        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
-      });
-    },
-    [weekStart, selectedDayIndex]
-  );
-
   const updateCustomStickers = useCallback(
     (newCustom) => {
       setStore((prev) => (prev ? { ...prev, customStickers: newCustom } : prev));
@@ -615,42 +596,23 @@ export default function App() {
             <Doodles />
 
             <div ref={rightPageRef} className="flex-1 min-h-0 relative no-scrollbar" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              {/* Top section: Journal + Todo (resizable height) */}
-              <div style={{ height: `${weekData.days[selectedDayIndex]?.topHeight || 55}%` }}>
-                <div className="flex h-full gap-1 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
-                  <div className="flex-1 min-w-0" style={{ flexBasis: `${weekData.days[selectedDayIndex]?.journalWidth || 50}%` }}>
-                    <JournalPanel
-                      key={weekData.days[selectedDayIndex]?.date}
-                      day={weekData.days[selectedDayIndex]}
-                      onDayUpdate={(newDay) => updateDay(selectedDayIndex, newDay)}
-                    />
-                  </div>
-
-                  <ResizeHandle
-                    direction="vertical"
-                    onResize={(pct) => updateResize(
-                      weekData.days[selectedDayIndex]?.topHeight || 55,
-                      pct
-                    )}
+              <div className="flex flex-col gap-1 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
+                <div className="flex-1 min-w-0">
+                  <JournalPanel
+                    key={weekData.days[selectedDayIndex]?.date}
+                    day={weekData.days[selectedDayIndex]}
+                    onDayUpdate={(newDay) => updateDay(selectedDayIndex, newDay)}
                   />
+                </div>
 
-                  <div className="flex-1 min-w-0">
-                    <TodoCard data={weekData.days[selectedDayIndex]?.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
-                  </div>
+                <div className="w-full md:w-[42%] shrink-0">
+                  <TodoCard data={weekData.days[selectedDayIndex]?.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
                 </div>
               </div>
 
-              {/* Horizontal resize handle between top and habits */}
-              <ResizeHandle
-                direction="horizontal"
-                onResize={(pct) => updateResize(
-                  pct,
-                  weekData.days[selectedDayIndex]?.journalWidth || 50
-                )}
-              />
+              <div className="mx-3 md:mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
 
-              {/* Bottom section: Habits (takes remaining space) */}
-              <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-3 md:px-4 pt-1 md:pt-2 pb-1 md:pb-3">
+              <div className="px-3 md:px-4 pt-1 md:pt-2 pb-1 md:pb-3">
                 <HabitAreas
                   habits={weekData.habits || []}
                   waterTrack={store.waterTrack}

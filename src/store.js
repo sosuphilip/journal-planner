@@ -81,8 +81,6 @@ function blankWeek(weekStartStr) {
       leftPlacedStickers: [],
       rightPlacedStickers: [],
       todoCard: { title: "todo list", items: [] },
-      topHeight: 55,
-      journalWidth: 50,
     };
   });
 
