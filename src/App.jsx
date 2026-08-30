@@ -458,7 +458,7 @@ export default function App() {
         >
           {saveStatus === "saving" && "saving..."}
           {saveStatus === "saved" && "saved ✓"}
-          {saveStatus === "error" && "save failed — retrying"}
+          {saveStatus === "error" && "save failed — saved locally"}
         </div>
       )}
 
