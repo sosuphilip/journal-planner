@@ -591,12 +591,11 @@ export default function App() {
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
               minHeight: 0,
-              overflow: "hidden",
             }}
           >
             <Doodles />
 
-            <div ref={rightPageRef} className="right-scroll-area flex-1 min-h-0 relative no-scrollbar">
+            <div ref={rightPageRef} className="right-scroll-area flex-1 min-h-0 relative no-scrollbar" style={{ height: 0 }}>
               {/* Top section: Journal + Todo — fills remaining vertical space on desktop */}
               <div className="right-top-section flex-1 min-h-0 px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
                 <div className="flex-1 min-w-0 h-full">
