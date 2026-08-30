@@ -484,7 +484,7 @@ export default function App() {
             className="absolute no-interact"
             style={{
               right: -48,
-              top: "30%",
+              top: "22%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
               background: "var(--tab-2026-bg)",
@@ -505,7 +505,7 @@ export default function App() {
             className="absolute no-interact"
             style={{
               right: -40,
-              top: "45%",
+              top: "35%",
               transform: "translateY(-50%) rotate(-90deg)",
               transformOrigin: "center",
               background: "var(--tab-date-bg)",
@@ -526,7 +526,7 @@ export default function App() {
             className="absolute flex flex-col gap-1.5 no-interact"
             style={{
               right: -14,
-              top: "58%",
+              top: "48%",
               transform: "translateY(-50%)",
               pointerEvents: "none",
             }}
