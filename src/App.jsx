@@ -527,7 +527,7 @@ export default function App() {
             className="absolute flex flex-col gap-1.5 no-interact"
             style={{
               right: -14,
-              top: "48%",
+              top: "38%",
               transform: "translateY(-50%)",
               pointerEvents: "none",
             }}
