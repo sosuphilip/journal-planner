@@ -91,6 +91,7 @@ export default function App() {
   const storeRef = useRef(store);
   useEffect(() => { storeRef.current = store; });
   const rightPageRef = useRef(null);
+  const leftPageRef = useRef(null);
 
   // Save status: null | "saving" | "saved" | "error"
   const [saveStatus, setSaveStatus] = useState(null);
@@ -535,7 +536,7 @@ export default function App() {
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
             </div>
 
-            <div className="flex-1 flex flex-col px-1 md:px-2 pb-1 md:pb-2 overflow-y-auto no-scrollbar">
+            <div ref={leftPageRef} className="flex-1 flex flex-col px-1 md:px-2 pb-1 md:pb-2 overflow-y-auto no-scrollbar relative" style={{ minHeight: 0 }}>
               {weekData.days.map((day, idx) => (
                 <DayRow
                   key={day.date}
@@ -551,6 +552,12 @@ export default function App() {
                   onDayUpdate={(newDay) => updateDay(idx, newDay)}
                 />
               ))}
+              <StickerLayer
+                placedStickers={weekData.days[selectedDayIndex]?.placedStickers || []}
+                onPlacedChange={updatePlacedStickers}
+                customStickers={store.customStickers}
+                containerRef={leftPageRef}
+              />
             </div>
           </div>
 
