@@ -612,6 +612,41 @@ html, body, #root {
 }
 
 /* ========================================
+   TABLET (769px–1024px) — balanced two-page layout
+   ======================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* More balanced grid — right page not as wide as desktop */
+  .notebook-grid {
+    grid-template-columns: 1fr 1.3fr;
+  }
+
+  /* Slightly tighter padding */
+  .right-top-section {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Day rows slightly more compact */
+  .day-row {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    gap: 0.3rem;
+  }
+
+  /* Habit cells */
+  .habit-cell {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Water drops */
+  .water-drop {
+    width: 9px;
+    height: 12px;
+  }
+}
+
+/* ========================================
    SIGN OUT BUTTON
    ======================================== */
 .sign-out-btn {
