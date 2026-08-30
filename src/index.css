@@ -116,6 +116,8 @@ html, body, #root {
   touch-action: manipulation;
   -webkit-overflow-scrolling: auto;
   overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* PWA standalone: fill behind status bar */
@@ -147,6 +149,8 @@ html, body, #root {
 /* Prevent iOS auto-scroll to focused input */
 input, textarea, [contenteditable] {
   caret-color: var(--text);
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 html {
