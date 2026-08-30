@@ -196,6 +196,8 @@ export default function App() {
 
   // Mobile view toggle: "days" or "journal"
   const [mobileView, setMobileView] = useState("days");
+  // Track which page is active for sticker placement
+  const [activePage, setActivePage] = useState("right");
   const [isMobileLandscape, setIsMobileLandscape] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.innerWidth > window.innerHeight && window.innerHeight <= 500;
@@ -543,8 +545,9 @@ export default function App() {
               borderRight: "1px solid var(--page-border)",
               transition: "background-color 0.3s ease, border-color 0.3s ease",
               minHeight: 0,
-              overflow: "hidden",
+              overflow: "visible",
             }}
+            onClick={() => setActivePage("left")}
           >
             <div className="px-2 pt-1.5 pb-0.5 md:px-4 md:pt-3 md:pb-1">
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
@@ -560,6 +563,7 @@ export default function App() {
                   isSelected={idx === selectedDayIndex}
                   onSelect={() => {
                     setSelectedDayIndex(idx);
+                    setActivePage("left");
                     // On mobile, auto-switch to journal when tapping a day
                     if (window.innerWidth <= 768) setMobileView("journal");
                   }}
@@ -583,8 +587,9 @@ export default function App() {
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
               minHeight: 0,
-              overflow: "hidden",
+              overflow: "visible",
             }}
+            onClick={() => setActivePage("right")}
           >
             <Doodles />
 
@@ -662,7 +667,11 @@ export default function App() {
             height: 50,
             rotation: 0,
           };
-          updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
+          if (activePage === "left") {
+            updateLeftPlacedStickers([...(day.leftPlacedStickers || []), newSticker]);
+          } else {
+            updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
+          }
         }}
       />
 
