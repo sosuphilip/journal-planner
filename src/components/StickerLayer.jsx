@@ -270,8 +270,8 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
                 <div
                   onMouseDown={(e) => handleRotatePointerDown(e, sticker.id)}
                   onTouchStart={(e) => handleRotatePointerDown(e, sticker.id)}
-                  className="absolute -top-6 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-dusty-blue cursor-grab flex items-center justify-center"
-                  style={{ pointerEvents: "auto", userSelect: "none", touchAction: "none" }}
+                  className="absolute -top-6 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full cursor-grab flex items-center justify-center"
+                  style={{ pointerEvents: "auto", userSelect: "none", touchAction: "none", background: "var(--color-dusty-blue)" }}
                   title="Rotate"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">

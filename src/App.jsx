@@ -286,6 +286,10 @@ export default function App() {
   // Auto-save to Supabase whenever store changes (debounced)
   useEffect(() => {
     if (store && user) {
+      // Immediately update localStorage cache so edits survive a refresh
+      // even if the cloud save hasn't completed yet
+      updateCache(user.id, store);
+
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(performSave, 500);
     }
@@ -547,7 +551,6 @@ export default function App() {
               minHeight: 0,
               overflow: "visible",
             }}
-            onClick={() => setActivePage("left")}
           >
             <div className="px-2 pt-1.5 pb-0.5 md:px-4 md:pt-3 md:pb-1">
               <Header weekStart={weekStart} onNavigate={setWeekStart} dark={dark} onToggleDark={() => setDark(!dark)} />
@@ -589,7 +592,6 @@ export default function App() {
               minHeight: 0,
               overflow: "visible",
             }}
-            onClick={() => setActivePage("right")}
           >
             <Doodles />
 
@@ -653,7 +655,9 @@ export default function App() {
       <StickerTray
         customStickers={store.customStickers}
         onCustomStickersChange={updateCustomStickers}
-        onStickerTapPlace={(stickerType, isCustom) => {
+        activePage={activePage}
+        onPageSelect={setActivePage}
+        onStickerTapPlace={(stickerType, isCustom, targetPage) => {
           const wd = store.weeks[weekStart];
           const day = wd?.days[selectedDayIndex];
           if (!day) return;
@@ -667,7 +671,7 @@ export default function App() {
             height: 50,
             rotation: 0,
           };
-          if (activePage === "left") {
+          if (targetPage === "left") {
             updateLeftPlacedStickers([...(day.leftPlacedStickers || []), newSticker]);
           } else {
             updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);

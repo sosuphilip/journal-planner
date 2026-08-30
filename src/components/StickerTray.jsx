@@ -98,7 +98,7 @@ const BUILTIN_STICKERS = {
 
 export { BUILTIN_STICKERS };
 
-export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange, onStickerTapPlace }) {
+export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange, onStickerTapPlace, activePage, onPageSelect }) {
   const [open, setOpen] = useState(false);
   const [draggingSticker, setDraggingSticker] = useState(null);
   const fileInputRef = useRef(null);
@@ -158,10 +158,10 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
     e.dataTransfer.effectAllowed = "copy";
   };
 
-  // Tap-to-place for touch: tapping a sticker places it in center of journal
+  // Tap-to-place: tapping a sticker places it on the selected page
   const handleTapPlace = (stickerType, isCustom = false) => {
     if (onStickerTapPlace) {
-      onStickerTapPlace(stickerType, isCustom);
+      onStickerTapPlace(stickerType, isCustom, activePage || "right");
     }
     setOpen(false);
   };
@@ -199,8 +199,35 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
           onPaste={handlePaste}
           tabIndex={0}
         >
-          <div className="font-hand text-sm font-bold mb-2" style={{ color: "var(--text-muted)" }}>
-            stickers
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-hand text-sm font-bold" style={{ color: "var(--text-muted)" }}>
+              stickers
+            </span>
+            {/* Page selector */}
+            <div className="flex gap-1">
+              <button
+                onClick={() => onPageSelect && onPageSelect("left")}
+                className="text-xs font-hand px-2 py-0.5 rounded cursor-pointer transition-colors"
+                style={{
+                  background: activePage === "left" ? "var(--color-dusty-blue)" : "transparent",
+                  color: activePage === "left" ? "white" : "var(--text-faint)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                📋 left
+              </button>
+              <button
+                onClick={() => onPageSelect && onPageSelect("right")}
+                className="text-xs font-hand px-2 py-0.5 rounded cursor-pointer transition-colors"
+                style={{
+                  background: activePage === "right" ? "var(--color-dusty-blue)" : "transparent",
+                  color: activePage === "right" ? "white" : "var(--text-faint)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                📓 right
+              </button>
+            </div>
           </div>
 
           {/* Built-in stickers grid */}
