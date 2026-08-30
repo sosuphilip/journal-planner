@@ -13,6 +13,10 @@ export default function JournalPanel({ day, onDayUpdate }) {
   const [line2, setLine2] = useState(day.musicNote?.line2 || "");
   const timerRef = useRef(null);
   const dayRef = useRef(day);
+  // Capture the onDayUpdate callback at mount time only.
+  // This ensures cleanup always calls the correct day's updater,
+  // even after the parent has changed selectedDayIndex.
+  const onDayUpdateRef = useRef(onDayUpdate);
   const fieldsRef = useRef({});
   useEffect(() => { dayRef.current = day; });
 
@@ -30,11 +34,13 @@ export default function JournalPanel({ day, onDayUpdate }) {
             delete updated.line1;
             delete updated.line2;
           }
-          onDayUpdate(updated);
+          // Use the ref to always call the correct day's updater,
+          // not the stale closure that may point to a different day index
+          onDayUpdateRef.current(updated);
         }
       }
     };
-  }, [onDayUpdate]);
+  }, []);
 
   // Track pending field changes so unmount cleanup can flush them
   const scheduleSave = useCallback((fields) => {
@@ -53,7 +59,8 @@ export default function JournalPanel({ day, onDayUpdate }) {
         };
       }
       fieldsRef.current = {};
-      onDayUpdate(updated);
+      // Use ref to avoid stale closure — always save to the correct day
+      onDayUpdateRef.current(updated);
     }, 400);
   }, [onDayUpdate]);
 
