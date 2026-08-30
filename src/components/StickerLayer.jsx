@@ -32,19 +32,23 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   };
 
   // Convert notebook-relative percentage to scroll-container-relative CSS percentage
-  // This is needed because the scroll container may be a different size than the notebook
+  // Accounts for both size difference AND positional offset (left page takes space)
   const toContainerCSS = (notebookXP, notebookYP) => {
     const nb = notebookRef?.current;
     const ct = containerRef?.current;
     if (!nb || !ct) return { left: notebookXP, top: notebookYP };
     const nbRect = nb.getBoundingClientRect();
     const ctRect = ct.getBoundingClientRect();
-    // Scale: what % of the container does a notebook-X% correspond to?
-    const scaleX = nbRect.width / ctRect.width;
-    const scaleY = nbRect.height / ctRect.height;
+    // Pixel position within the notebook
+    const pixelX = (notebookXP / 100) * nbRect.width;
+    const pixelY = (notebookYP / 100) * nbRect.height;
+    // Offset: how far is the container's left/top edge from the notebook's?
+    const offsetX = ctRect.left - nbRect.left;
+    const offsetY = ctRect.top - nbRect.top;
+    // Convert to container-relative percentage
     return {
-      left: notebookXP * scaleX,
-      top: notebookYP * scaleY,
+      left: ((pixelX - offsetX) / ctRect.width) * 100,
+      top: ((pixelY - offsetY) / ctRect.height) * 100,
     };
   };
 

@@ -670,7 +670,7 @@ export default function App() {
             id: uid(),
             stickerType,
             isCustom: isCustom || false,
-            xP: 40,
+            xP: 50,
             yP: 30,
             width: 50,
             height: 50,
