@@ -14,29 +14,37 @@ function clientXY(e) {
   return { x: e.clientX, y: e.clientY };
 }
 
-export default function StickerLayer({ placedStickers, onPlacedChange, customStickers, containerRef }) {
+export default function StickerLayer({ placedStickers, onPlacedChange, customStickers, containerRef, notebookRef }) {
   const [selectedId, setSelectedId] = useState(null);
   const dragRef = useRef({});
   const stickersRef = useRef(placedStickers);
   useEffect(() => { stickersRef.current = placedStickers; }, [placedStickers]);
 
-  // Convert viewport pixels to percentage of container, and back
-  const toPercent = (vx, vy) => {
-    const el = containerRef?.current;
+  // Convert viewport pixels to percentage of NOTEBOOK (consistent across devices)
+  const toNotebookPercent = (vx, vy) => {
+    const el = notebookRef?.current || containerRef?.current;
     if (!el) return { xP: vx, yP: vy };
     const rect = el.getBoundingClientRect();
     return {
       xP: ((vx - rect.left) / rect.width) * 100,
-      yP: ((vy - rect.top + el.scrollTop) / rect.height) * 100,
+      yP: ((vy - rect.top + (containerRef?.current?.scrollTop || 0)) / rect.height) * 100,
     };
   };
-  const toPixels = (xP, yP) => {
-    const el = containerRef?.current;
-    if (!el) return { x: xP, y: yP };
-    const rect = el.getBoundingClientRect();
+
+  // Convert notebook-relative percentage to scroll-container-relative CSS percentage
+  // This is needed because the scroll container may be a different size than the notebook
+  const toContainerCSS = (notebookXP, notebookYP) => {
+    const nb = notebookRef?.current;
+    const ct = containerRef?.current;
+    if (!nb || !ct) return { left: notebookXP, top: notebookYP };
+    const nbRect = nb.getBoundingClientRect();
+    const ctRect = ct.getBoundingClientRect();
+    // Scale: what % of the container does a notebook-X% correspond to?
+    const scaleX = nbRect.width / ctRect.width;
+    const scaleY = nbRect.height / ctRect.height;
     return {
-      x: (xP / 100) * rect.width + rect.left,
-      y: (yP / 100) * rect.height + rect.top - el.scrollTop,
+      left: notebookXP * scaleX,
+      top: notebookYP * scaleY,
     };
   };
 
@@ -64,9 +72,10 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
       const { x: cx, y: cy } = clientXY(e);
       const dx = cx - dragRef.current.startX;
       const dy = cy - dragRef.current.startY;
-      const el = containerRef?.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
+      // Calculate delta as percentage of the NOTEBOOK (consistent across devices)
+      const nb = notebookRef?.current || containerRef?.current;
+      if (!nb) return;
+      const rect = nb.getBoundingClientRect();
       const dxP = (dx / rect.width) * 100;
       const dyP = (dy / rect.height) * 100;
       onPlacedChange(stickersRef.current.map((s) =>
@@ -117,9 +126,9 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     e.stopPropagation();
     e.preventDefault();
     const sticker = stickersRef.current.find((s) => s.id === id);
-    const el = containerRef?.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
+    const nb = notebookRef?.current || containerRef?.current;
+    if (!nb) return;
+    const rect = nb.getBoundingClientRect();
     const centerX = (sticker.xP / 100) * rect.width + sticker.width / 2;
     const centerY = (sticker.yP / 100) * rect.height + sticker.height / 2;
     const { x: cx, y: cy } = clientXY(e);
@@ -192,7 +201,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     const data = e.dataTransfer?.getData("application/sticker");
     if (!data) return;
     const { stickerType, isCustom } = JSON.parse(data);
-    const { xP, yP } = toPercent(e.clientX, e.clientY);
+    const { xP, yP } = toNotebookPercent(e.clientX, e.clientY);
     onPlacedChange([...stickersRef.current, {
       id: uid(), stickerType, isCustom: isCustom || false,
       xP, yP, width: 50, height: 50, rotation: 0,
@@ -221,23 +230,16 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
         const isNew = !animatedRef.current.has(sticker.id);
         if (isNew) animatedRef.current.add(sticker.id);
 
-        // Convert percentage back to pixel offset for rendering
-        const el = containerRef?.current;
-        let renderLeft = sticker.xP || 0;
-        let renderTop = sticker.yP || 0;
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          renderLeft = (sticker.xP / 100) * rect.width;
-          renderTop = (sticker.yP / 100) * rect.height;
-        }
+        // Convert notebook-relative % to scroll-container CSS %
+        const cssPos = toContainerCSS(sticker.xP || 0, sticker.yP || 0);
 
         return (
           <div
             key={sticker.id}
             style={{
               position: "absolute",
-              left: `${sticker.xP}%`,
-              top: `${sticker.yP}%`,
+              left: `${cssPos.left}%`,
+              top: `${cssPos.top}%`,
               width: sticker.width,
               height: sticker.height,
               transform: `rotate(${sticker.rotation || 0}deg)`,

@@ -92,6 +92,7 @@ export default function App() {
   useEffect(() => { storeRef.current = store; });
   const rightPageRef = useRef(null);
   const leftPageRef = useRef(null);
+  const notebookRef = useRef(null);
 
   // Save status: null | "saving" | "saved" | "error"
   const [saveStatus, setSaveStatus] = useState(null);
@@ -538,7 +539,7 @@ export default function App() {
         </div>
 
         {/* Notebook pages (overflow:hidden for scroll) */}
-        <div className="notebook-spread">
+        <div className="notebook-spread" ref={notebookRef}>
           <div className="notebook-grid h-full w-full">
           {/* ── LEFT PAGE ──── */}
           <div
@@ -578,6 +579,7 @@ export default function App() {
                 onPlacedChange={updateLeftPlacedStickers}
                 customStickers={store.customStickers}
                 containerRef={leftPageRef}
+                notebookRef={notebookRef}
               />
             </div>
           </div>
@@ -630,6 +632,7 @@ export default function App() {
                 onPlacedChange={updateRightPlacedStickers}
                 customStickers={store.customStickers}
                 containerRef={rightPageRef}
+                notebookRef={notebookRef}
               />
             </div>
           </div>
