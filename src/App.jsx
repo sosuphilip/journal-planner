@@ -615,8 +615,8 @@ export default function App() {
               {/* Dashed divider */}
               <div className="mx-3 md:mx-4 no-interact" style={{ borderTop: "1px dashed var(--border)", pointerEvents: "none" }} />
 
-              {/* Bottom section: Habits — natural size */}
-              <div className="px-3 md:px-4 pt-1 md:pt-2 pb-1 md:pb-3">
+              {/* Bottom section: Habits — always visible, flex-shrink: 0 */}
+              <div className="px-3 md:px-4 pt-1 md:pt-2 pb-1 md:pb-3" style={{ flexShrink: 0 }}>
                 <HabitAreas
                   habits={weekData.habits || []}
                   waterTrack={store.waterTrack}

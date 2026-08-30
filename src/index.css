@@ -556,10 +556,10 @@ html, body, #root {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Desktop: journal+todo stretches to fill, habits stays natural */
+/* Desktop: journal+todo stretches to fill, habits stays natural but always visible */
 @media (min-width: 769px) {
   .right-scroll-area {
-    overflow: hidden;
+    overflow-y: auto;
   }
   .right-top-section {
     display: flex;
