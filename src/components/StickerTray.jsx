@@ -200,7 +200,8 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
           onPaste={handlePaste}
           tabIndex={0}
         >
-          <div className="flex items-center justify-between mb-2">
+          {/* Fixed header — title + page selector, never scrolls */}
+          <div className="flex items-center justify-between mb-2" style={{ flexShrink: 0 }}>
             <span className="font-hand text-sm font-bold" style={{ color: "var(--text-muted)" }}>
               stickers
             </span>
@@ -231,57 +232,60 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
             </div>
           </div>
 
-          {/* Built-in stickers grid */}
-          <div className="grid grid-cols-5 gap-1.5 mb-2">
-            {Object.entries(BUILTIN_STICKERS).map(([name, svg]) => (
-              <div
-                key={name}
-                draggable
-                onDragStart={(e) => handleDragStart(e, name)}
-                onClick={() => handleTapPlace(name)}
-                className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors"
-                title={`Drag or tap ${name}`}
-              >
-                <div className="w-7 h-7">{svg}</div>
-              </div>
-            ))}
+          {/* Scrollable sticker area — grid + custom + upload */}
+          <div style={{ overflowY: 'auto', maxHeight: '40vh', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {/* Built-in stickers grid */}
+            <div className="grid grid-cols-5 gap-1.5">
+              {Object.entries(BUILTIN_STICKERS).map(([name, svg]) => (
+                <div
+                  key={name}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, name)}
+                  onClick={() => handleTapPlace(name)}
+                  className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors"
+                  title={`Drag or tap ${name}`}
+                >
+                  <div className="w-7 h-7">{svg}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Custom stickers */}
+            {customStickers.length > 0 && (
+              <>
+                <div className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>
+                  custom
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {customStickers.map((cs) => (
+                    <div
+                      key={cs.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, cs.id, true)}
+                      onClick={() => handleTapPlace(cs.id, true)}
+                      className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors overflow-hidden"
+                      title={`Drag or tap ${cs.name}`}
+                    >
+                      <img
+                        src={cs.imageDataUrl}
+                        alt={cs.name}
+                        className="w-7 h-7 object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Upload button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full text-sm font-hand py-1.5 rounded-md bg-white/50 hover:bg-white/80 transition-colors"
+              style={{ color: "var(--text-muted)", border: "1px dashed var(--border-strong)", cursor: "pointer" }}
+            >
+              + upload sticker
+            </button>
           </div>
-
-          {/* Custom stickers */}
-          {customStickers.length > 0 && (
-            <>
-              <div className="font-hand text-sm mb-1" style={{ color: "var(--text-faint)" }}>
-                custom
-              </div>
-              <div className="grid grid-cols-5 gap-1.5 mb-2">
-                {customStickers.map((cs) => (
-                  <div
-                    key={cs.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, cs.id, true)}
-                    onClick={() => handleTapPlace(cs.id, true)}
-                    className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors overflow-hidden"
-                    title={`Drag or tap ${cs.name}`}
-                  >
-                    <img
-                      src={cs.imageDataUrl}
-                      alt={cs.name}
-                      className="w-7 h-7 object-contain"
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Upload button */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full text-sm font-hand py-1.5 rounded-md bg-white/50 hover:bg-white/80 transition-colors"
-            style={{ color: "var(--text-muted)", border: "1px dashed var(--border-strong)", cursor: "pointer" }}
-          >
-            + upload sticker
-          </button>
           <input
             ref={fileInputRef}
             type="file"

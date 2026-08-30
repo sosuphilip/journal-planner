@@ -437,11 +437,6 @@ html, body, #root {
     font-size: 11px;
   }
 
-  /* Move sticker tray up on landscape so it doesn't overlap decorative tabs */
-  .sticker-tray.fixed {
-    bottom: 15% !important;
-  }
-
   .day-row {
     padding-top: 0px;
     padding-bottom: 0px;
