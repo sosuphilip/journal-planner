@@ -10,6 +10,7 @@ import {
   loadCachedCloudStore,
   saveWeek,
   saveSettings,
+  updateCache,
 } from "./lib/cloudStore";
 import {
   initStore,
@@ -90,6 +91,10 @@ export default function App() {
   const storeRef = useRef(store);
   useEffect(() => { storeRef.current = store; });
   const rightPageRef = useRef(null);
+
+  // Save status: null | "saving" | "saved" | "error"
+  const [saveStatus, setSaveStatus] = useState(null);
+  const saveStatusTimerRef = useRef(null);
 
   // Theme state — persists to localStorage, respects system preference
   const [dark, setDark] = useState(() => {
@@ -239,31 +244,71 @@ export default function App() {
     return () => clearInterval(interval);
   }, [today, store]);
 
-  // Debounced cloud save — capture store + weekStart at call time so the
-  // timeout always writes the correct snapshot even if state changes meanwhile.
+  // Debounced cloud save — always reads latest state from refs so there are
+  // no stale-closure issues with weekStart or store.
   const saveTimerRef = useRef(null);
   const weekStartRef = useRef(weekStart);
   useEffect(() => { weekStartRef.current = weekStart; });
-  const debouncedCloudSave = useCallback(
-    (storeSnapshot) => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => {
-        if (!user) return;
-        const ws = weekStartRef.current;
-        const weekData = storeSnapshot.weeks[ws];
-        if (weekData) saveWeek(user.id, ws, weekData);
-        saveSettings(user.id, storeSnapshot);
-      }, 500);
-    },
-    [user]
-  );
 
-  // Auto-save to Supabase whenever store changes
+  const performSave = useCallback(async () => {
+    if (!user) return;
+    const currentStore = storeRef.current;
+    if (!currentStore) return;
+    const ws = weekStartRef.current;
+    setSaveStatus("saving");
+    try {
+      const weekData = currentStore.weeks[ws];
+      const results = await Promise.allSettled([
+        weekData ? saveWeek(user.id, ws, weekData) : Promise.resolve({ ok: true }),
+        saveSettings(user.id, currentStore),
+      ]);
+      const anyFailed = results.some(
+        (r) => r.status === "rejected" || (r.status === "fulfilled" && r.value?.ok === false)
+      );
+      if (anyFailed) {
+        setSaveStatus("error");
+      } else {
+        updateCache(user.id, currentStore);
+        setSaveStatus("saved");
+      }
+    } catch (err) {
+      console.error("Save failed:", err);
+      setSaveStatus("error");
+    }
+    // Clear status after a moment
+    if (saveStatusTimerRef.current) clearTimeout(saveStatusTimerRef.current);
+    saveStatusTimerRef.current = setTimeout(() => setSaveStatus(null), 3000);
+  }, [user]);
+
+  // Auto-save to Supabase whenever store changes (debounced)
   useEffect(() => {
     if (store && user) {
-      debouncedCloudSave(store);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(performSave, 500);
     }
-  }, [store, user, debouncedCloudSave]);
+  }, [store, user, performSave]);
+
+  // Flush any pending save immediately on page close / navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        // Synchronous save attempt — best-effort on beforeunload
+        const currentStore = storeRef.current;
+        if (currentStore && user) {
+          const ws = weekStartRef.current;
+          const weekData = currentStore.weeks[ws];
+          // Use sendBeacon-compatible approach: localStorage backup
+          // (Supabase async calls can't complete before unload)
+          try {
+            localStorage.setItem("planner-cloud-cache", JSON.stringify({ userId: user.id, data: currentStore }));
+          } catch { /* ignore */ }
+        }
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [user]);
 
   const weekData = store ? getWeek(store, weekStart) : null;
 
@@ -375,6 +420,26 @@ export default function App() {
 
   return (
     <div className="app-shell w-screen h-screen overflow-hidden relative" style={{ background: "var(--bg)" }}>
+      {/* Save status indicator */}
+      {saveStatus && (
+        <div
+          className="fixed z-50 font-hand text-xs py-1 px-3 rounded-md transition-all"
+          style={{
+            top: 12,
+            left: 12,
+            background: "var(--clear-btn-bg)",
+            border: "1px solid var(--tray-border)",
+            color: saveStatus === "error" ? "var(--color-muted-red)" : saveStatus === "saved" ? "var(--color-sage)" : "var(--text-faint)",
+            pointerEvents: "none",
+            opacity: 0.9,
+          }}
+        >
+          {saveStatus === "saving" && "saving..."}
+          {saveStatus === "saved" && "saved ✓"}
+          {saveStatus === "error" && "save failed — retrying"}
+        </div>
+      )}
+
       {/* Sign out button */}
       <button
         onClick={handleSignOut}

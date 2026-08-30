@@ -49,9 +49,10 @@ export default function DayRow({ day, index, isToday, isSelected, onSelect, onDa
         borderBottom: index < 6 ? "1px dashed rgba(197,185,168,0.4)" : "none",
         minHeight: isFri ? "auto" : "2.2rem",
       }}
+      onClick={onSelect}
     >
-      {/* Date numeral + day label — only this area opens the journal */}
-      <div className="flex items-center gap-1.5 shrink-0 w-14 relative" style={{ pointerEvents: "auto", color: "var(--text)" }} onClick={onSelect}>
+      {/* Date numeral + day label */}
+      <div className="flex items-center gap-1.5 shrink-0 w-14 relative" style={{ pointerEvents: "none", color: "var(--text)" }}>
         {/* Selected indicator */}
         {isSelected && (
           <span className="day-dot-enter absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full" style={{ background: "#b8c9a3" }} />

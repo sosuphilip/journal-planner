@@ -70,7 +70,7 @@ export function loadCachedCloudStore(userId) {
   return loadCachedData(userId);
 }
 
-/** Save a single week to Supabase */
+/** Save a single week to Supabase. Returns { ok, error }. */
 export async function saveWeek(userId, weekStart, weekData) {
   const { error } = await supabase.from("weeks").upsert(
     {
@@ -78,14 +78,17 @@ export async function saveWeek(userId, weekStart, weekData) {
       week_start: weekStart,
       days_data: weekData.days,
       habits_data: weekData.habits || [],
-
     },
     { onConflict: "user_id,week_start" }
   );
-  if (error) console.error("Failed to save week:", error);
+  if (error) {
+    console.error("Failed to save week:", error);
+    return { ok: false, error: error.message };
+  }
+  return { ok: true, error: null };
 }
 
-/** Save settings to Supabase */
+/** Save settings to Supabase. Returns { ok, error }. */
 export async function saveSettings(userId, store) {
   const { error } = await supabase.from("settings").upsert(
     {
@@ -97,7 +100,16 @@ export async function saveSettings(userId, store) {
     },
     { onConflict: "user_id" }
   );
-  if (error) console.error("Failed to save settings:", error);
+  if (error) {
+    console.error("Failed to save settings:", error);
+    return { ok: false, error: error.message };
+  }
+  return { ok: true, error: null };
+}
+
+/** Update the local cache after a successful save */
+export function updateCache(userId, store) {
+  cacheCloudData(userId, store);
 }
 
 /** Create default settings for a new user */
