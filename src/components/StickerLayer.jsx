@@ -66,7 +66,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   // ── Move sticker ──
   const handlePointerDown = (e, id) => {
     e.stopPropagation();
-    e.preventDefault();
+    // Note: no preventDefault() — causes passive event listener warning on mobile
     setSelectedId(id);
     const { x: cx, y: cy } = clientXY(e);
     const sticker = stickersRef.current.find((s) => s.id === id);
@@ -101,7 +101,6 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   // ── Resize sticker ──
   const handleResizePointerDown = (e, id) => {
     e.stopPropagation();
-    e.preventDefault();
     const sticker = stickersRef.current.find((s) => s.id === id);
     const { x: startX } = clientXY(e);
     const origW = sticker.width;
@@ -128,7 +127,6 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   // ── Rotate sticker ──
   const handleRotatePointerDown = (e, id) => {
     e.stopPropagation();
-    e.preventDefault();
     const sticker = stickersRef.current.find((s) => s.id === id);
     const nb = notebookRef?.current || containerRef?.current;
     if (!nb) return;
@@ -221,7 +219,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
       style={{
         position: "absolute",
         inset: 0,
-        zIndex: 50,
+        zIndex: 10,
         pointerEvents: isDragActive ? "auto" : "none",
         userSelect: "none",
         overflow: "visible",
@@ -247,7 +245,7 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
               width: sticker.width,
               height: sticker.height,
               transform: `rotate(${sticker.rotation || 0}deg)`,
-              zIndex: isSelected ? 100 : 51,
+              zIndex: isSelected ? 20 : 15,
               userSelect: "none",
               touchAction: "none",
             }}
