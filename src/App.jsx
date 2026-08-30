@@ -666,17 +666,20 @@ export default function App() {
           const wd = store.weeks[weekStart];
           const day = wd?.days[selectedDayIndex];
           if (!day) return;
+          // Left page occupies ~38% of notebook, right page ~62%
+          // Place sticker at center of the target page
+          const isLeft = targetPage === "left";
           const newSticker = {
             id: uid(),
             stickerType,
             isCustom: isCustom || false,
-            xP: 50,
+            xP: isLeft ? 19 : 69,
             yP: 30,
             width: 50,
             height: 50,
             rotation: 0,
           };
-          if (targetPage === "left") {
+          if (isLeft) {
             updateLeftPlacedStickers([...(day.leftPlacedStickers || []), newSticker]);
           } else {
             updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
