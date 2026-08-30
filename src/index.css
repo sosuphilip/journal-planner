@@ -122,7 +122,25 @@ html, body, #root {
 body {
   position: fixed;
   inset: 0;
+}
+
+html, body, #root {
   overflow: hidden;
+}
+
+/* Small screens: allow body scroll so content isn't clipped */
+@media (max-width: 500px) and (orientation: portrait) {
+  html, body, #root {
+    overflow: auto;
+    position: static;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  html, body, #root {
+    overflow: auto;
+    position: static;
+  }
 }
 
 /* Prevent iOS auto-scroll to focused input */
@@ -147,7 +165,7 @@ html {
    DOT GRID PATTERN (right page background)
    ======================================== */
 .dot-grid-bg {
-  background-image: radial-gradient(circle, var(--color-dot-grid) 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--dot-grid) 1px, transparent 1px);
   background-size: 18px 18px;
 }
 

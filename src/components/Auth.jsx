@@ -10,6 +10,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resetSent, setResetSent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +59,28 @@ export default function Auth() {
       setError(err?.message || "Google sign-in failed. Please try again.");
       setLoading(false);
     }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+      if (resetError) {
+        setError(resetError.message);
+      } else {
+        setResetSent(true);
+      }
+    } catch (err) {
+      setError(err?.message || "Failed to send reset email.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -145,40 +168,57 @@ export default function Auth() {
 
         {/* Email / password form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="w-full px-3 py-2.5 rounded-lg font-hand text-base"
-            style={{
-              background: "var(--journal-bg)",
-              border: "1px solid var(--journal-border)",
-              color: "var(--text)",
-            }}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            minLength={6}
-            className="w-full px-3 py-2.5 rounded-lg font-hand text-base"
-            style={{
-              background: "var(--journal-bg)",
-              border: "1px solid var(--journal-border)",
-              color: "var(--text)",
-            }}
-          />
+          <label className="flex flex-col gap-1">
+            <span className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              aria-label="Email address"
+              className="w-full px-3 py-2.5 rounded-lg font-hand text-base"
+              style={{
+                background: "var(--journal-bg)",
+                border: "1px solid var(--journal-border)",
+                color: "var(--text)",
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>Password</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min 6 characters"
+              required
+              minLength={6}
+              aria-label="Password"
+              className="w-full px-3 py-2.5 rounded-lg font-hand text-base"
+              style={{
+                background: "var(--journal-bg)",
+                border: "1px solid var(--journal-border)",
+                color: "var(--text)",
+              }}
+            />
+          </label>
 
           {error && (
             <p
               className="font-hand text-sm text-center"
-              style={{ color: "var(--color-muted-red)" }}
+              style={{ color: resetSent ? "var(--color-sage)" : "var(--color-muted-red)" }}
             >
               {error}
+            </p>
+          )}
+
+          {resetSent && (
+            <p
+              className="font-hand text-sm text-center"
+              style={{ color: "var(--color-sage)" }}
+            >
+              Check your email for a password reset link!
             </p>
           )}
 
@@ -200,6 +240,20 @@ export default function Auth() {
               : "Sign Up"}
           </button>
         </form>
+
+        {/* Forgot password */}
+        {mode === "sign-in" && !resetSent && (
+          <div className="text-center mt-2">
+            <button
+              onClick={handleResetPassword}
+              disabled={loading}
+              className="font-hand text-sm bg-transparent border-none cursor-pointer"
+              style={{ color: "var(--color-accent-blue)" }}
+            >
+              Forgot password?
+            </button>
+          </div>
+        )}
 
         {/* Toggle sign-in / sign-up */}
         <p

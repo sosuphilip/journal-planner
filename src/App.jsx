@@ -239,19 +239,23 @@ export default function App() {
     return () => clearInterval(interval);
   }, [today, store]);
 
-  // Debounced cloud save
+  // Debounced cloud save — capture store + weekStart at call time so the
+  // timeout always writes the correct snapshot even if state changes meanwhile.
   const saveTimerRef = useRef(null);
+  const weekStartRef = useRef(weekStart);
+  useEffect(() => { weekStartRef.current = weekStart; });
   const debouncedCloudSave = useCallback(
-    (newStore) => {
+    (storeSnapshot) => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(() => {
         if (!user) return;
-        const currentWeekData = newStore.weeks[weekStart];
-        if (currentWeekData) saveWeek(user.id, weekStart, currentWeekData);
-        saveSettings(user.id, newStore);
+        const ws = weekStartRef.current;
+        const weekData = storeSnapshot.weeks[ws];
+        if (weekData) saveWeek(user.id, ws, weekData);
+        saveSettings(user.id, storeSnapshot);
       }, 500);
     },
-    [user, weekStart]
+    [user]
   );
 
   // Auto-save to Supabase whenever store changes

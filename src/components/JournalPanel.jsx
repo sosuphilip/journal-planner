@@ -13,45 +13,75 @@ export default function JournalPanel({ day, onDayUpdate }) {
   const [line2, setLine2] = useState(day.musicNote?.line2 || "");
   const timerRef = useRef(null);
   const dayRef = useRef(day);
+  const fieldsRef = useRef({});
   useEffect(() => { dayRef.current = day; });
 
-  // Debounced save using refs to avoid stale closures
-  const debouncedSave = useCallback((field, value) => {
+  // Flush any pending debounced save on unmount so switching days doesn't lose edits
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        const d = dayRef.current;
+        const fields = fieldsRef.current;
+        if (Object.keys(fields).length > 0) {
+          const updated = { ...d, ...fields };
+          if (fields.line1 !== undefined || fields.line2 !== undefined) {
+            updated.musicNote = { ...(d.musicNote || {}), ...(fields.line1 !== undefined ? { line1: fields.line1 } : {}), ...(fields.line2 !== undefined ? { line2: fields.line2 } : {}) };
+            delete updated.line1;
+            delete updated.line2;
+          }
+          onDayUpdate(updated);
+        }
+      }
+    };
+  }, [onDayUpdate]);
+
+  // Track pending field changes so unmount cleanup can flush them
+  const scheduleSave = useCallback((fields) => {
     if (timerRef.current) clearTimeout(timerRef.current);
+    fieldsRef.current = { ...fieldsRef.current, ...fields };
+    const snapshot = { ...fieldsRef.current };
     timerRef.current = setTimeout(() => {
       const d = dayRef.current;
-      onDayUpdate({ ...d, [field]: value });
+      const { line1, line2, ...rest } = snapshot;
+      let updated = { ...d, ...rest };
+      if (line1 !== undefined || line2 !== undefined) {
+        updated.musicNote = {
+          ...(d.musicNote || {}),
+          ...(line1 !== undefined ? { line1 } : {}),
+          ...(line2 !== undefined ? { line2 } : {}),
+        };
+      }
+      fieldsRef.current = {};
+      onDayUpdate(updated);
     }, 400);
   }, [onDayUpdate]);
 
-  const debouncedMusicSave = useCallback((field, value) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const d = dayRef.current;
-      onDayUpdate({ ...d, musicNote: { ...(d.musicNote || {}), [field]: value } });
-    }, 400);
-  }, [onDayUpdate]);
+  // Reset fields ref when day changes (component remounts via key)
+  useEffect(() => {
+    fieldsRef.current = {};
+  }, [day.date]);
 
   const handleJournalChange = (e) => {
     const val = e.target.value;
     setJournalText(val);
-    debouncedSave("journalText", val);
+    scheduleSave({ journalText: val });
   };
 
   const handleMoodChange = (e) => {
     const val = e.target.value;
     setMoodText(val);
-    debouncedSave("journalMood", val);
+    scheduleSave({ journalMood: val });
   };
 
   const handleLine1Change = (e) => {
     setLine1(e.target.value);
-    debouncedMusicSave("line1", e.target.value);
+    scheduleSave({ line1: e.target.value });
   };
 
   const handleLine2Change = (e) => {
     setLine2(e.target.value);
-    debouncedMusicSave("line2", e.target.value);
+    scheduleSave({ line2: e.target.value });
   };
 
   return (
