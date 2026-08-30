@@ -476,7 +476,7 @@ export default function App() {
       </button>
 
       {/* ── Two-page notebook spread ──── */}
-      <div className="relative" style={{ width: '100%', height: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+      <div className="relative" style={{ width: '100%', height: '100%' }}>
         {/* ── Decorative tabs (pinned to notebook edges, overflow visible) ──── */}
         <div className="notebook-tabs">
           {/* Right-side tabs — hang off the right edge into background */}

@@ -601,9 +601,12 @@ html, body, #root {
     display: none !important;
   }
 
-  /* Account for bottom nav height */
+  /* Account for bottom nav height — fill edge to edge */
   .notebook-spread {
+    width: 100% !important;
     height: calc(100dvh - 60px);
+    max-width: none;
+    margin: 0;
   }
 
   /* Move sticker tray button above the bottom nav */
