@@ -6,7 +6,7 @@ A cozy, notebook-style weekly planner with journaling, habits, stickers, and clo
 
 ### Open the App
 
-**Live app:** [https://your-deployed-url.com](https://your-deployed-url.com)
+**Live app:** [https://your-deployed-url.com](https://journal-planner.vercel.app)
 
 **Add to Home Screen (mobile):**
 1. Open the app in your phone's browser (Chrome on Android, Safari on iPhone)
