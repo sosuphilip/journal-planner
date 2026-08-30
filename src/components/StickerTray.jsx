@@ -171,7 +171,7 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
       {/* Toggle button — always visible in outer margin */}
       <button
         onClick={() => setOpen(!open)}
-        className="sticker-tray fixed bottom-4 right-4 z-50 rounded-full flex items-center justify-center shadow-lg"
+        className="sticker-tray sticker-tray-btn fixed bottom-4 right-4 z-50 rounded-full flex items-center justify-center shadow-lg"
         style={{ width: 'clamp(44px, 10vw, 56px)', height: 'clamp(44px, 10vw, 56px)' }}
         style={{
           background: "var(--sticker-tray-bg)",

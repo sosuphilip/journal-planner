@@ -601,14 +601,14 @@ html, body, #root {
   }
 
   /* Sticker tray button sits at same level as Days/Journal nav, on the right */
-  .sticker-tray.fixed {
+  .sticker-tray-btn {
     bottom: 0 !important;
     right: 0 !important;
     border-radius: 12px 0 0 0 !important;
   }
 
   /* Sticker tray panel opens above the nav bar */
-  .sticker-tray.fixed[style*="bottom: 16"] {
+  .sticker-tray.fixed:not(.sticker-tray-btn) {
     bottom: 56px !important;
   }
 }
