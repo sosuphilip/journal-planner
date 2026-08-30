@@ -600,14 +600,16 @@ html, body, #root {
     height: calc(100dvh - 60px);
   }
 
-  /* Move sticker tray button above the bottom nav */
+  /* Sticker tray button sits at same level as Days/Journal nav, on the right */
   .sticker-tray.fixed {
-    bottom: 60px !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    border-radius: 12px 0 0 0 !important;
   }
 
-  /* Move sticker tray panel above bottom nav too */
+  /* Sticker tray panel opens above the nav bar */
   .sticker-tray.fixed[style*="bottom: 16"] {
-    bottom: 110px !important;
+    bottom: 56px !important;
   }
 }
 
