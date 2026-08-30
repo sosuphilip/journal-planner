@@ -604,12 +604,14 @@ html, body, #root {
   .sticker-tray-btn {
     bottom: 0 !important;
     right: 0 !important;
+    z-index: 65 !important;
     border-radius: 12px 0 0 0 !important;
   }
 
   /* Sticker tray panel opens above the nav bar */
   .sticker-tray.fixed:not(.sticker-tray-btn) {
     bottom: 56px !important;
+    z-index: 65 !important;
   }
 }
 
@@ -658,9 +660,9 @@ html, body, #root {
 
 @media (max-width: 768px) {
   .sign-out-btn {
-    bottom: 60px;
+    top: 8px;
     left: 8px;
-    top: auto;
+    bottom: auto;
     right: auto;
     font-size: 11px;
     padding: 2px 8px;
