@@ -34,7 +34,7 @@ function WaterTracker({ waterTrack, weekStart, onWaterChange }) {
       </div>
 
       {/* Day columns: label + 4 droplets + total */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap justify-start">
         {weekDates.map((dateKey, dayIdx) => {
           const liters = waterTrack[dateKey] || 0;
           const filledCount = Math.round(liters / litersPerDrop);

@@ -549,7 +549,7 @@ export default function App() {
               borderRight: "1px solid var(--page-border)",
               transition: "background-color 0.3s ease, border-color 0.3s ease",
               minHeight: 0,
-              overflow: "visible",
+              overflow: "hidden",
             }}
           >
             <div className="px-2 pt-1.5 pb-0.5 md:px-4 md:pt-3 md:pb-1">
@@ -591,7 +591,7 @@ export default function App() {
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
               minHeight: 0,
-              overflow: "visible",
+              overflow: "hidden",
             }}
           >
             <Doodles />
