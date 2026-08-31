@@ -525,6 +525,47 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* ========================================
+   DUAL-SCREEN / FOLDABLE DEVICES
+   Viewport Segments API (Chrome 138+, Edge 138+)
+   When spanning two screens, align each notebook page
+   to its own screen segment so the hinge falls in
+   the natural gutter between pages.
+   ======================================== */
+@media (horizontal-viewport-segments: 2) {
+  .notebook-spread {
+    max-width: none;
+    /* Size to fill both segments minus hinge gap */
+    width: calc(env(viewport-segment-width 0 0) + env(viewport-segment-width 0 1));
+    height: env(viewport-segment-height 0 0);
+  }
+
+  .notebook-grid {
+    grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 0 1);
+    height: 100%;
+  }
+
+  /* Left page fills left segment, right page fills right segment */
+  .notebook-grid > * {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Add inner padding so content doesn't sit right at the hinge edge */
+  .notebook-grid > :first-child {
+    padding-right: 8px;
+  }
+  .notebook-grid > :last-child {
+    padding-left: 8px;
+  }
+
+  /* Hide notebook tabs — they'd overlap the hinge */
+  .notebook-tabs {
+    display: none;
+  }
+}
+
 /* Tab wrapper — sits next to notebook-spread, allows tabs to extend outside */
 .notebook-tabs {
   position: absolute;
