@@ -675,33 +675,9 @@ html, body, #root {
   right: 12px;
 }
 
-@media (max-width: 768px) and (orientation: portrait) {
+@media (max-width: 768px) {
   .sign-out-btn {
-    bottom: 62px;
-    left: 8px;
-    top: auto;
-    right: auto;
-    font-size: 11px;
-    padding: 2px 8px;
-    opacity: 0.5;
-  }
-  .sign-out-btn:active {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 768px) and (orientation: landscape) {
-  .sign-out-btn {
-    top: 8px;
-    left: 8px;
-    bottom: auto;
-    right: auto;
-    font-size: 11px;
-    padding: 2px 8px;
-    opacity: 0.5;
-  }
-  .sign-out-btn:active {
-    opacity: 1;
+    display: none !important;
   }
 }
 

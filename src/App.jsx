@@ -462,7 +462,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Sign out button */}
+      {/* Sign out button — desktop only */}
       <button
         onClick={handleSignOut}
         className="sign-out-btn fixed z-50 font-hand text-sm py-1 px-3 rounded-md cursor-pointer"
@@ -653,6 +653,14 @@ export default function App() {
         >
           <span className="text-lg">📓</span>
           <span>Journal</span>
+        </button>
+        <button
+          onClick={handleSignOut}
+          className="mobile-nav-btn"
+          style={{ opacity: 0.5, marginLeft: 'auto', marginRight: '8px' }}
+        >
+          <span className="text-lg">🚪</span>
+          <span>sign out</span>
         </button>
       </div>
 
