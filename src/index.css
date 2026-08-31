@@ -556,11 +556,8 @@ html, body, #root {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Desktop: journal+todo stretches to fill, habits stays natural but always visible */
+/* Desktop: journal+todo side by side */
 @media (min-width: 769px) {
-  .right-scroll-area {
-    overflow-y: auto;
-  }
   .right-top-section {
     display: flex;
     flex-direction: row;
