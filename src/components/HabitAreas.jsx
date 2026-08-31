@@ -150,6 +150,8 @@ className="relative flex items-center gap-0 group"
               className="font-hand text-sm"
               style={{ color: "var(--text)" }}
               placeholder="habit..."
+              id={`habit-name-${habit.id}`}
+              name={`habit-${habit.id}`}
             />
           </div>
 

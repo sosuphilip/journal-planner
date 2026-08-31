@@ -298,6 +298,8 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
           <input
             ref={fileInputRef}
             type="file"
+            id="sticker-upload"
+            name="stickerUpload"
             accept="image/png,image/webp,image/jpeg"
             onChange={handleUpload}
             className="hidden"

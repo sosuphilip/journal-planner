@@ -105,6 +105,8 @@ export default function JournalPanel({ day, onDayUpdate }) {
 
       {/* Journal textarea */}
       <textarea
+        id="journal-text"
+        name="journal"
         value={journalText}
         onChange={handleJournalChange}
         className="flex-1 font-hand text-base leading-relaxed p-2 w-full"
@@ -125,6 +127,8 @@ export default function JournalPanel({ day, onDayUpdate }) {
         <span className="font-hand text-sm" style={{ color: "var(--color-accent-blue)" }}>✦</span>
         <input
           type="text"
+          id="journal-mood"
+          name="mood"
           value={moodText}
           onChange={handleMoodChange}
           className="font-hand text-sm flex-1"
@@ -149,6 +153,8 @@ export default function JournalPanel({ day, onDayUpdate }) {
         <div className="flex flex-col gap-0 min-w-0 flex-1" style={{ pointerEvents: "auto", color: "var(--text-muted)" }}>
           <input
             type="text"
+            id="journal-music-line1"
+            name="musicLine1"
             value={line1}
             onChange={handleLine1Change}
             className="font-hand text-sm w-full"
@@ -157,6 +163,8 @@ export default function JournalPanel({ day, onDayUpdate }) {
           />
           <input
             type="text"
+            id="journal-music-line2"
+            name="musicLine2"
             value={line2}
             onChange={handleLine2Change}
             className="font-hand text-sm w-full"

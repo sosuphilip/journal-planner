@@ -172,6 +172,8 @@ export default function Auth() {
             <span className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>Email</span>
             <input
               type="email"
+              id="auth-email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -189,6 +191,8 @@ export default function Auth() {
             <span className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>Password</span>
             <input
               type="password"
+              id="auth-password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Min 6 characters"

@@ -9,6 +9,8 @@ export default function EditableText({
   className = "",
   placeholder = "click to edit...",
   style = {},
+  id,
+  name,
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -35,6 +37,8 @@ export default function EditableText({
       <input
         ref={inputRef}
         type="text"
+        id={id}
+        name={name}
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={handleBlur}
