@@ -18,11 +18,11 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
     <div className="flex flex-col items-center w-full no-interact relative">
       {/* Month + Year pill */}
       <div
-        className="rounded-full px-5 py-0.5 mb-1" style={{ background: 'rgba(184,201,163,0.3)' }}
-        style={{ pointerEvents: "none" }}
+        className="rounded-full px-5 py-0.5 mb-1"
+        style={{ background: 'rgba(184,201,163,0.3)', pointerEvents: "none" }}
       >
         <span
-          className="font-hand text-xl font-semibold" style={{ color: 'var(--color-sage)' }}
+          className="font-hand text-xl font-semibold"
           style={{ color: "#6b8a5e" }}
         >
           {monthYear}
@@ -32,8 +32,8 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
       {/* Week label + nav arrows */}
       <div className="flex items-center gap-3 mt-0.5">
         <button
-          className="nav-arrow no-interact" style={{ color: 'var(--color-dusty-blue)' }}
-          style={{ pointerEvents: "auto" }}
+          className="nav-arrow no-interact"
+          style={{ color: 'var(--color-dusty-blue)', pointerEvents: "auto" }}
           onClick={() => onNavigate(adjacentWeek(weekStart, -1))}
           aria-label="Previous week"
         >
@@ -50,8 +50,8 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
         </span>
 
         <button
-          className="nav-arrow no-interact" style={{ color: 'var(--color-dusty-blue)' }}
-          style={{ pointerEvents: "auto" }}
+          className="nav-arrow no-interact"
+          style={{ color: 'var(--color-dusty-blue)', pointerEvents: "auto" }}
           onClick={() => onNavigate(adjacentWeek(weekStart, 1))}
           aria-label="Next week"
         >
@@ -65,8 +65,9 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
       <button
         onClick={onToggleDark}
         className="absolute right-0 top-0 rounded-full flex items-center justify-center cursor-pointer"
-        style={{ width: 'clamp(36px, 8vw, 44px)', height: 'clamp(36px, 8vw, 44px)' }}
         style={{
+          width: 'clamp(36px, 8vw, 44px)',
+          height: 'clamp(36px, 8vw, 44px)',
           background: dark ? "rgba(160,144,128,0.25)" : "rgba(155,180,201,0.2)",
           border: "1px solid var(--border-strong)",
           pointerEvents: "auto",

@@ -8,6 +8,63 @@ import { uid, fmtDate } from "../store";
 
 // ── Helpers ──────────────────────────────────────────────
 
+/**
+ * Ensure we have a valid session before making queries.
+ * Attempts to refresh if the current session is expired.
+ * Returns true if a valid session exists, false otherwise.
+ */
+async function ensureSession() {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) {
+      console.warn("Session check failed:", error.message);
+      return false;
+    }
+    if (!session) {
+      console.warn("No active session — user may need to re-authenticate");
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Failed to check session:", err);
+    return false;
+  }
+}
+
+/**
+ * Execute a Supabase query with retry on 401 errors.
+ * On 401, tries to refresh the session once, then retries.
+ */
+async function queryWithRetry(queryFn, maxRetries = 1) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const result = await queryFn();
+
+    // Check for auth errors (Supabase returns these in the error object)
+    if (result.error) {
+      const msg = result.error.message || "";
+      const status = result.error.status || result.error.code || 0;
+
+      // 401 / JWT expired / auth errors
+      if (status === 401 || msg.includes("JWT") || msg.includes("expired") || msg.includes("invalid_token")) {
+        if (attempt < maxRetries) {
+          console.warn(`Auth error on attempt ${attempt + 1}, refreshing session...`);
+          try {
+            await supabase.auth.refreshSession();
+          } catch (refreshErr) {
+            console.error("Session refresh failed:", refreshErr);
+            return result; // return the original error
+          }
+          continue; // retry
+        }
+      }
+    }
+
+    return result;
+  }
+  // Should not reach here, but just in case
+  return { data: null, error: new Error("Query failed after retries") };
+}
+
 // ── Public API ───────────────────────────────────────────
 
 const CACHE_KEY = "planner-cloud-cache";
@@ -33,10 +90,20 @@ function loadCachedData(userId) {
 
 /** Load all user data from Supabase (queries run in parallel) */
 export async function loadCloudStore(userId) {
-  // Run both queries in parallel instead of sequentially
+  // Validate session first — if expired, try to refresh before querying
+  const hasSession = await ensureSession();
+  if (!hasSession) {
+    console.warn("No valid session for loadCloudStore — falling back to cache");
+  }
+
+  // Run both queries in parallel with retry on auth errors
   const [weeksResult, settingsResult] = await Promise.allSettled([
-    supabase.from("weeks").select("*").eq("user_id", userId),
-    supabase.from("settings").select("*").eq("user_id", userId).maybeSingle(),
+    queryWithRetry(() =>
+      supabase.from("weeks").select("*").eq("user_id", userId)
+    ),
+    queryWithRetry(() =>
+      supabase.from("settings").select("*").eq("user_id", userId).maybeSingle()
+    ),
   ]);
 
   // Parse weeks
@@ -72,14 +139,16 @@ export function loadCachedCloudStore(userId) {
 
 /** Save a single week to Supabase. Returns { ok, error }. */
 export async function saveWeek(userId, weekStart, weekData) {
-  const { error } = await supabase.from("weeks").upsert(
-    {
-      user_id: userId,
-      week_start: weekStart,
-      days_data: weekData.days,
-      habits_data: weekData.habits || [],
-    },
-    { onConflict: "user_id,week_start" }
+  const { error } = await queryWithRetry(() =>
+    supabase.from("weeks").upsert(
+      {
+        user_id: userId,
+        week_start: weekStart,
+        days_data: weekData.days,
+        habits_data: weekData.habits || [],
+      },
+      { onConflict: "user_id,week_start" }
+    )
   );
   if (error) {
     console.error("Failed to save week:", error);
@@ -90,15 +159,17 @@ export async function saveWeek(userId, weekStart, weekData) {
 
 /** Save settings to Supabase. Returns { ok, error }. */
 export async function saveSettings(userId, store) {
-  const { error } = await supabase.from("settings").upsert(
-    {
-      user_id: userId,
-      habits: store.habits,
-      water_track: store.waterTrack,
-      custom_stickers: store.customStickers,
-      placed_stickers: store.placedStickers,
-    },
-    { onConflict: "user_id" }
+  const { error } = await queryWithRetry(() =>
+    supabase.from("settings").upsert(
+      {
+        user_id: userId,
+        habits: store.habits,
+        water_track: store.waterTrack,
+        custom_stickers: store.customStickers,
+        placed_stickers: store.placedStickers,
+      },
+      { onConflict: "user_id" }
+    )
   );
   if (error) {
     console.error("Failed to save settings:", error);

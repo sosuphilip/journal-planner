@@ -696,6 +696,7 @@ html, body, #root {
 
 @media (max-height: 500px) and (orientation: landscape) {
   .sign-out-btn {
+    display: block !important;
     bottom: 8px;
     left: 8px;
     top: auto;
@@ -815,9 +816,10 @@ html, body, #root {
     padding-bottom: 2px !important;
   }
 
-  /* Water tracker */
-  .flex.gap-2.flex-wrap {
+  /* Water tracker grid — use dedicated class for reliable targeting */
+  .water-tracker-grid {
     gap: 0.25rem !important;
+    row-gap: 0.5rem !important;
   }
 
   /* Habit cells: slightly smaller */

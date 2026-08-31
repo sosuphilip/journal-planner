@@ -175,8 +175,9 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
       <button
         onClick={() => setOpen(!open)}
         className="sticker-tray sticker-tray-btn fixed bottom-4 right-4 z-50 rounded-full flex items-center justify-center shadow-lg"
-        style={{ width: 'clamp(44px, 10vw, 56px)', height: 'clamp(44px, 10vw, 56px)' }}
         style={{
+          width: 'clamp(44px, 10vw, 56px)',
+          height: 'clamp(44px, 10vw, 56px)',
           background: "var(--sticker-tray-bg)",
           border: "2px solid rgba(255,255,255,0.5)",
           cursor: "pointer",

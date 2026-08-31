@@ -34,7 +34,7 @@ function WaterTracker({ waterTrack, weekStart, onWaterChange }) {
       </div>
 
       {/* Day columns: label + 4 droplets + total */}
-      <div className="flex gap-2 flex-wrap justify-start">
+      <div className="water-tracker-grid flex gap-x-2 gap-y-3 flex-wrap justify-start">
         {weekDates.map((dateKey, dayIdx) => {
           const liters = waterTrack[dateKey] || 0;
           const filledCount = Math.round(liters / litersPerDrop);
@@ -54,10 +54,10 @@ function WaterTracker({ waterTrack, weekStart, onWaterChange }) {
                         onWaterChange(dateKey, liters === newVal ? 0 : newVal);
                       }}
                       className={`water-drop bg-transparent border-none p-0 cursor-pointer ${isFilled ? "water-drop-filled" : ""}`}
-                      style={{ pointerEvents: "auto", width: 12, height: 16 }}
+                      style={{ pointerEvents: "auto" }}
                       title={`${(dropIdx + 1) * litersPerDrop}L`}
                     >
-                      <svg width="12" height="16" viewBox="0 0 20 26">
+                      <svg width="100%" height="100%" viewBox="0 0 20 26">
                         <path
                           d="M10 2 Q10 2 4 14 Q0 20 4 23 Q7 26 10 26 Q13 26 16 23 Q20 20 16 14 Q10 2 10 2Z"
                           fill={isFilled ? "#6a9ec0" : "rgba(155,180,201,0.15)"}
@@ -178,8 +178,7 @@ className="relative flex items-center gap-0 group"
           {/* Delete — absolute so it doesn't push layout */}
           <button
             onClick={() => removeHabit(habit.id)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-5 text-xs bg-transparent border-none cursor-pointer transition-opacity" style={{ color: 'var(--color-muted-pink)' }}
-            style={{ pointerEvents: "auto", opacity: hoveredRow === habit.id ? 0.6 : 0 }}
+            style={{ color: 'var(--color-muted-pink)', pointerEvents: "auto", opacity: hoveredRow === habit.id ? 0.6 : 0 }}
             title="Remove habit"
           >
             ×
@@ -190,7 +189,7 @@ className="relative flex items-center gap-0 group"
       {/* Add habit */}
       <button
         onClick={(e) => { e.stopPropagation(); addHabit(); }}
-        className="text-sm mt-0.5 bg-transparent border-none cursor-pointer text-left transition-colors" style={{ color: 'var(--text-muted)' }}
+        className="text-sm mt-0.5 bg-transparent border-none cursor-pointer text-left transition-colors"
         style={{ pointerEvents: "auto", color: "var(--text-muted)" }}
       >
         + add habit
@@ -202,7 +201,7 @@ className="relative flex items-center gap-0 group"
 /* ── Main Export ────────────────────────────── */
 export default function HabitAreas({ habits, waterTrack, weekStart, onHabitsChange, onWaterChange }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       {/* Section header */}
       <div className="flex items-center gap-2" style={{ pointerEvents: "none" }}>
         <span

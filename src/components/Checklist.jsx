@@ -85,8 +85,7 @@ export default function Checklist({ items = [], onChange, showCheckboxes = true,
           {hoveredIdx === idx && (
             <button
               onClick={() => deleteItem(idx)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity bg-transparent border-none cursor-pointer text-xs font-bold px-1 no-interact" style={{ color: 'var(--color-muted-pink)' }}
-              style={{ pointerEvents: "auto", opacity: hoveredIdx === idx ? 0.6 : 0 }}
+              style={{ color: 'var(--color-muted-pink)', pointerEvents: "auto", opacity: hoveredIdx === idx ? 0.6 : 0 }}
               aria-label="Delete item"
             >
               ×
@@ -97,7 +96,8 @@ export default function Checklist({ items = [], onChange, showCheckboxes = true,
 
       {/* Add button */}
       <button
-        onClick={(e) => { e.stopPropagation(); addItem(); }}            className="text-sm mt-1 bg-transparent border-none cursor-pointer text-left transition-colors no-interact" style={{ color: 'var(--text-muted)' }}
+        onClick={(e) => { e.stopPropagation(); addItem(); }}
+        className="text-sm mt-1 bg-transparent border-none cursor-pointer text-left transition-colors"
         style={{ pointerEvents: "auto", color: "var(--text-muted)" }}
       >
         + add item

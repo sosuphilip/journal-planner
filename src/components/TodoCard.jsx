@@ -20,8 +20,8 @@ export default function TodoCard({ data, onUpdate }) {
   return (
     <div
       className="rounded-lg relative transition-shadow duration-200"
-      style={{ padding: 'clamp(8px, 2vw, 12px)' }}
       style={{
+        padding: 'clamp(8px, 2vw, 12px)',
         background: "var(--card-bg)",
         border: "1.5px dashed var(--card-border)",
         minHeight: "auto",
