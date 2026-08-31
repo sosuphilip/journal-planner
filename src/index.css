@@ -278,6 +278,8 @@ textarea:focus, input[type="text"]:focus {
 
 /* Water droplet */
 .water-drop {
+  width: 10px;
+  height: 14px;
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
