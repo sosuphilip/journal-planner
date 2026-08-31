@@ -2,7 +2,7 @@
    CHECKLIST — reusable editable checklist
    Used in DayRow and TodoCard.
    ======================================== */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { uid } from "../store";
 import EditableText from "./EditableText";
 
@@ -50,8 +50,15 @@ export default function Checklist({ items = [], onChange, showCheckboxes = true,
   };
 
   const addItem = () => {
-    onChange([...items, { id: uid(), text: "", checked: false }]);
+    // Also clean existing ghost rows when adding a new one
+    onChange([...cleanItems(items), { id: uid(), text: "", checked: false }]);
   };
+
+  // On mount, clean any ghost rows left from a previous session
+  useEffect(() => {
+    const cleaned = cleanItems(items);
+    if (cleaned.length !== items.length) onChange(cleaned);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`flex flex-col gap-0.5 ${className}`}>
