@@ -617,7 +617,7 @@ html, body, #root {
     height: 100dvh;
   }
 
-  /* Hide the floating sticker button — it's now in the nav bar */
+  /* Hide the floating sticker button in portrait — it's in the nav bar */
   .sticker-tray-btn {
     display: none !important;
   }
@@ -626,6 +626,22 @@ html, body, #root {
   .sticker-tray.fixed:not(.sticker-tray-btn) {
     bottom: 56px !important;
     z-index: 65 !important;
+  }
+}
+
+/* Mobile landscape: show floating sticker + sign-out buttons again (no nav bar) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sticker-tray-btn {
+    display: flex !important;
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+  .sign-out-btn {
+    display: block !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    top: auto !important;
+    right: auto !important;
   }
 }
 
