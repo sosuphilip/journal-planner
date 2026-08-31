@@ -788,10 +788,10 @@ html, body, #root {
     gap: 0.25rem !important;
   }
 
-  /* Journal textarea: shorter */
+  /* Journal textarea: scale with viewport height */
   .right-top-section textarea {
     min-height: 60px !important;
-    max-height: 80px;
+    max-height: calc(40vh - 20px);
     padding: 4px 8px !important;
     font-size: 0.8rem !important;
     line-height: 1.3 !important;
