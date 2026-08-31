@@ -592,9 +592,19 @@ html, body, #root {
     display: none !important;
   }
 
-  /* Account for bottom nav height */
+  /* Account for bottom nav height on portrait only */
   .notebook-spread {
-    height: calc(100dvh - 60px);
+    height: 100dvh;
+  }
+
+  @media (orientation: portrait) {
+    .notebook-spread {
+      height: calc(100dvh - 56px);
+    }
+  }
+
+  .app-shell {
+    height: 100dvh;
   }
 
   /* Sticker tray button sits at same level as Days/Journal nav, on the right */

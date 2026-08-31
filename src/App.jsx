@@ -441,7 +441,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell w-screen h-screen overflow-hidden relative" style={{ background: "var(--bg)" }}>
+    <div className="app-shell overflow-hidden relative" style={{ background: "var(--bg)" }}>
       {/* Save status indicator */}
       {saveStatus && (
         <div
