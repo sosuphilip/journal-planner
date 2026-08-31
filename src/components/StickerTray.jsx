@@ -98,8 +98,11 @@ const BUILTIN_STICKERS = {
 
 export { BUILTIN_STICKERS };
 
-export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange, onStickerTapPlace, activePage, onPageSelect }) {
-  const [open, setOpen] = useState(false);
+export default function StickerTray({ onStickerDrag, customStickers, onCustomStickersChange, onStickerTapPlace, activePage, onPageSelect, panelOpen, onPanelToggle }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  // Use external control if provided, otherwise internal state
+  const open = panelOpen !== undefined ? panelOpen : internalOpen;
+  const setOpen = onPanelToggle || setInternalOpen;
   const [draggingSticker, setDraggingSticker] = useState(null);
   const fileInputRef = useRef(null);
   const trayRef = useRef(null);

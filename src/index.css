@@ -617,12 +617,9 @@ html, body, #root {
     height: 100dvh;
   }
 
-  /* Sticker tray button sits at same level as Days/Journal nav, on the right */
+  /* Hide the floating sticker button — it's now in the nav bar */
   .sticker-tray-btn {
-    bottom: 0 !important;
-    right: 0 !important;
-    z-index: 65 !important;
-    border-radius: 12px 0 0 0 !important;
+    display: none !important;
   }
 
   /* Sticker tray panel opens above the nav bar */
@@ -714,8 +711,7 @@ html, body, #root {
     background: var(--tray-bg);
     border-top: 1px solid var(--tray-border);
     padding: 6px 0;
-    justify-content: center;
-    gap: 2rem;
+    justify-content: space-evenly;
     pointer-events: auto;
   }
 
@@ -728,9 +724,9 @@ html, body, #root {
     border: none;
     cursor: pointer;
     font-family: var(--font-hand);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-faint);
-    padding: 4px 16px;
+    padding: 4px 8px;
     border-radius: 8px;
     transition: color 0.15s, background 0.15s;
   }

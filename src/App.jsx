@@ -197,6 +197,8 @@ export default function App() {
 
   // Mobile view toggle: "days" or "journal"
   const [mobileView, setMobileView] = useState("days");
+  // Sticker tray open state (for mobile nav bar control)
+  const [stickerTrayOpen, setStickerTrayOpen] = useState(false);
   // Track which page is active for sticker placement
   const [activePage, setActivePage] = useState("right");
   const [isMobileLandscape, setIsMobileLandscape] = useState(() => {
@@ -655,9 +657,16 @@ export default function App() {
           <span>Journal</span>
         </button>
         <button
+          onClick={() => setStickerTrayOpen(!stickerTrayOpen)}
+          className={`mobile-nav-btn ${stickerTrayOpen ? "active" : ""}`}
+        >
+          <span className="text-lg">⭐</span>
+          <span>Stickers</span>
+        </button>
+        <button
           onClick={handleSignOut}
           className="mobile-nav-btn"
-          style={{ opacity: 0.5, marginLeft: 'auto', marginRight: '8px' }}
+          style={{ opacity: 0.5 }}
         >
           <span className="text-lg">🚪</span>
           <span>sign out</span>
@@ -669,6 +678,8 @@ export default function App() {
         onCustomStickersChange={updateCustomStickers}
         activePage={activePage}
         onPageSelect={setActivePage}
+        panelOpen={stickerTrayOpen}
+        onPanelToggle={setStickerTrayOpen}
         onStickerTapPlace={(stickerType, isCustom, targetPage) => {
           const wd = store.weeks[weekStart];
           const day = wd?.days[selectedDayIndex];
