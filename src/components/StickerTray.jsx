@@ -111,7 +111,11 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
   useEffect(() => {
     if (!open) return;
     const handleClick = (e) => {
-      if (trayRef.current && !trayRef.current.contains(e.target)) {
+      if (
+        trayRef.current &&
+        !trayRef.current.contains(e.target) &&
+        !e.target.closest('[data-sticker-toggle]')
+      ) {
         setOpen(false);
       }
     };
@@ -174,6 +178,7 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
       {/* Toggle button — always visible in outer margin */}
       <button
         onClick={() => setOpen(!open)}
+        data-sticker-toggle
         className="sticker-tray sticker-tray-btn fixed bottom-4 right-4 z-50 rounded-full flex items-center justify-center shadow-lg"
         style={{
           width: 'clamp(44px, 10vw, 56px)',

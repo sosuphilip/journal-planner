@@ -659,6 +659,7 @@ export default function App() {
         </button>
         <button
           onClick={() => setStickerTrayOpen(!stickerTrayOpen)}
+          data-sticker-toggle
           className={`mobile-nav-btn ${stickerTrayOpen ? "active" : ""}`}
         >
           <span className="text-lg">⭐</span>
