@@ -113,7 +113,7 @@ function HabitsTable({ habits, onHabitsChange }) {
   const addHabit = () => {
     onHabitsChange([
       ...habits,
-      { id: uid(), name: "", days: [false, false, false, false, false, false, false] },
+      { id: uid(), name: "new habit", days: [false, false, false, false, false, false, false] },
     ]);
   };
 

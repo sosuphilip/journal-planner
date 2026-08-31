@@ -108,15 +108,16 @@ export async function loadCloudStore(userId) {
 
   // Parse weeks
   let weeks = {};
-  if (weeksResult.status === "fulfilled" && weeksResult.value.data) {
+  const weeksOk = weeksResult.status === "fulfilled" && weeksResult.value.data;
+  if (weeksOk) {
     for (const row of weeksResult.value.data) {
       weeks[row.week_start] = { days: row.days_data, habits: row.habits_data || [] };
     }
   }
 
   // Parse settings
-  const settings =
-    settingsResult.status === "fulfilled" ? settingsResult.value.data : null;
+  const settingsOk = settingsResult.status === "fulfilled" && settingsResult.value.data;
+  const settings = settingsOk ? settingsResult.value.data : null;
 
   const cloudData = {
     weeks,
@@ -126,8 +127,11 @@ export async function loadCloudStore(userId) {
     placedStickers: settings?.placed_stickers || [],
   };
 
-  // Cache to localStorage for instant load next time
-  cacheCloudData(userId, cloudData);
+  // Only cache if BOTH queries succeeded — avoid caching partial/empty data
+  // that would overwrite good cached data on next load
+  if (weeksOk && settingsOk) {
+    cacheCloudData(userId, cloudData);
+  }
 
   return cloudData;
 }
@@ -183,23 +187,4 @@ export function updateCache(userId, store) {
   cacheCloudData(userId, store);
 }
 
-/** Create default settings for a new user */
-export async function createDefaultSettings(userId) {
-  const habits = [
-    { id: uid(), name: "dance", days: [false, false, false, false, false, false, false] },
-    { id: uid(), name: "gym", days: [false, false, false, false, false, false, false] },
-    { id: uid(), name: "stretch", days: [false, false, false, false, false, false, false] },
-    { id: uid(), name: "game", days: [false, false, false, false, false, false, false] },
-    { id: uid(), name: "calisthenics", days: [false, false, false, false, false, false, false] },
-  ];
 
-  const { error } = await supabase.from("settings").insert({
-    user_id: userId,
-    habits,
-    water_track: { [fmtDate(new Date())]: 1.8 },
-    custom_stickers: [],
-    placed_stickers: [],
-  });
-
-  if (error) console.error("Failed to create default settings:", error);
-}

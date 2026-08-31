@@ -20,6 +20,29 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
   const stickersRef = useRef(placedStickers);
   useEffect(() => { stickersRef.current = placedStickers; }, [placedStickers]);
 
+  // Track active document listeners so we can clean them up on unmount
+  const activeListenersRef = useRef([]);
+  useEffect(() => {
+    return () => {
+      // Cleanup any lingering listeners if component unmounts mid-drag
+      activeListenersRef.current.forEach(({ ev, handler, opts }) => {
+        document.removeEventListener(ev, handler, opts);
+      });
+      activeListenersRef.current = [];
+    };
+  }, []);
+
+  const addDocListener = (ev, handler, opts) => {
+    document.addEventListener(ev, handler, opts);
+    activeListenersRef.current.push({ ev, handler, opts });
+  };
+  const removeDocListener = (ev, handler, opts) => {
+    document.removeEventListener(ev, handler, opts);
+    activeListenersRef.current = activeListenersRef.current.filter(
+      (l) => !(l.ev === ev && l.handler === handler)
+    );
+  };
+
   // Convert viewport pixels to percentage of NOTEBOOK (consistent across devices)
   const toNotebookPercent = (vx, vy) => {
     const el = notebookRef?.current || containerRef?.current;
@@ -88,14 +111,14 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     };
     const onUp = () => {
       ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
-        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
+        removeDocListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onUp);
-    document.addEventListener("touchcancel", onUp);
+    addDocListener("mousemove", onMove);
+    addDocListener("mouseup", onUp);
+    addDocListener("touchmove", onMove, { passive: false });
+    addDocListener("touchend", onUp);
+    addDocListener("touchcancel", onUp);
   };
 
   // ── Resize sticker ──
@@ -114,14 +137,14 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     };
     const onUp = () => {
       ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
-        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
+        removeDocListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onUp);
-    document.addEventListener("touchcancel", onUp);
+    addDocListener("mousemove", onMove);
+    addDocListener("mouseup", onUp);
+    addDocListener("touchmove", onMove, { passive: false });
+    addDocListener("touchend", onUp);
+    addDocListener("touchcancel", onUp);
   };
 
   // ── Rotate sticker ──
@@ -147,14 +170,14 @@ export default function StickerLayer({ placedStickers, onPlacedChange, customSti
     };
     const onUp = () => {
       ["mousemove", "mouseup", "touchmove", "touchend", "touchcancel"].forEach((ev) =>
-        document.removeEventListener(ev, ev.includes("move") ? onMove : onUp)
+        removeDocListener(ev, ev.includes("move") ? onMove : onUp)
       );
     };
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onUp);
-    document.addEventListener("touchcancel", onUp);
+    addDocListener("mousemove", onMove);
+    addDocListener("mouseup", onUp);
+    addDocListener("touchmove", onMove, { passive: false });
+    addDocListener("touchend", onUp);
+    addDocListener("touchcancel", onUp);
   };
 
   const handleDelete = (id) => {

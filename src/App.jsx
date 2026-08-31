@@ -201,19 +201,6 @@ export default function App() {
   const [stickerTrayOpen, setStickerTrayOpen] = useState(false);
   // Track which page is active for sticker placement
   const [activePage, setActivePage] = useState("right");
-  const [isMobileLandscape, setIsMobileLandscape] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.innerWidth > window.innerHeight && window.innerHeight <= 500;
-  });
-
-  // Update on resize/orientation change
-  useEffect(() => {
-    const check = () => {
-      setIsMobileLandscape(window.innerWidth > window.innerHeight && window.innerHeight <= 500);
-    };
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   // Initialize selected day to today if in current week, else 0 (only on first load)
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
@@ -321,6 +308,14 @@ export default function App() {
   }, [user]);
 
   const weekData = store ? getWeek(store, weekStart) : null;
+
+  // If getWeek returned a new blank week (not in store), merge it in
+  useEffect(() => {
+    if (store && !store.weeks[weekStart]) {
+      const blank = getWeek(store, weekStart);
+      setStore((prev) => ({ ...prev, weeks: { ...prev.weeks, [weekStart]: blank } }));
+    }
+  }, [store, weekStart]);
 
   const updateDay = useCallback(
     (dayIndex, newDay) => {

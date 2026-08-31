@@ -39,13 +39,18 @@ export function getWeekNumber(date) {
   return 1 + Math.round(((d - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
 }
 
-/** Generate a unique ID */
+/** Generate a unique ID — uses crypto.randomUUID() when available, fallback to timestamp+random */
+let _uidCounter = 0;
 export function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback: timestamp + counter + random to avoid collisions
+  return Date.now().toString(36) + (++_uidCounter).toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-/** Read full store from localStorage */
-export function loadStore() {
+/** Read full store from localStorage (internal helper) */
+function loadStore() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
@@ -54,8 +59,8 @@ export function loadStore() {
   }
 }
 
-/** Write full store to localStorage */
-export function saveStore(data) {
+/** Write full store to localStorage (internal helper) */
+function saveStore(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
@@ -231,10 +236,13 @@ export function initStore() {
   return data;
 }
 
-/** Get week data for a given ISO date string */
+/** Get week data for a given ISO date string.
+ *  IMPORTANT: does NOT mutate the store — returns a new object if the week is missing.
+ *  Caller must merge the returned week back into the store via setState.
+ */
 export function getWeek(store, weekStartStr) {
   if (!store.weeks[weekStartStr]) {
-    store.weeks[weekStartStr] = blankWeek(weekStartStr);
+    return blankWeek(weekStartStr);
   }
   return store.weeks[weekStartStr];
 }

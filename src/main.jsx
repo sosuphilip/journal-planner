@@ -1,29 +1,36 @@
-import { StrictMode } from 'react'
+import { StrictMode, Component } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// ── Viewport height tracker ──────────────────────────────────
-// mobile browsers report 100vh/100dvh incorrectly (includes address bar).
-// window.visualViewport.height gives the REAL visible height.
-function updateVH() {
-  const vh = window.visualViewport?.height || window.innerHeight;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+/* ── Error Boundary — prevents white-screen crashes ────── */
+class ErrorBoundary extends Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) { return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 24, fontFamily: 'sans-serif', maxWidth: 500, margin: '40px auto' }}>
+          <h2>Something went wrong</h2>
+          <p style={{ color: '#666' }}>{this.state.error.message}</p>
+          <button onClick={() => { this.setState({ error: null }); window.location.reload(); }}
+            style={{ padding: '8px 16px', cursor: 'pointer', marginTop: 12 }}>
+            Reload app
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
-updateVH();
-window.visualViewport?.addEventListener('resize', updateVH);
-window.addEventListener('resize', updateVH);
-// Also update on orientation change
-window.addEventListener('orientationchange', () => {
-  setTimeout(updateVH, 100);
-});
-
-
 
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 )

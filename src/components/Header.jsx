@@ -65,6 +65,7 @@ export default function Header({ weekStart, onNavigate, dark, onToggleDark }) {
       <button
         onClick={onToggleDark}
         className="absolute right-0 top-0 rounded-full flex items-center justify-center cursor-pointer"
+        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
         style={{
           width: 'clamp(36px, 8vw, 44px)',
           height: 'clamp(36px, 8vw, 44px)',
