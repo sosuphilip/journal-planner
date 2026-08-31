@@ -589,7 +589,9 @@ html, body, #root {
   display: grid;
   /* Right page (journal) gets ~62% of width by default */
   grid-template-columns: 1fr 1.6fr;
+  grid-template-rows: 1fr;
   gap: 0;
+  height: 100%;
 }
 
 /* Mobile: single column, full width pages */
@@ -781,8 +783,10 @@ html, body, #root {
     padding-bottom: 0;
   }
 
-  /* Compact the top section padding */
+  /* Top section: column layout + fill remaining height */
   .right-top-section {
+    flex-direction: column !important;
+    flex: 1 !important;
     padding-top: 4px !important;
     padding-bottom: 0 !important;
     gap: 0.25rem !important;
