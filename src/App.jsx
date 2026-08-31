@@ -593,6 +593,7 @@ export default function App() {
               borderRadius: "0 12px 12px 0",
               transition: "background-color 0.3s ease",
               minHeight: 0,
+              overflow: "hidden",
             }}
           >
             <Doodles />
