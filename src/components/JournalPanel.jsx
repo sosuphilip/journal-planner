@@ -92,7 +92,7 @@ export default function JournalPanel({ day, onDayUpdate }) {
   };
 
   return (
-    <div className="flex flex-col relative" style={{ pointerEvents: "auto" }}>
+    <div className="flex flex-col h-full relative" style={{ pointerEvents: "auto" }}>
       {/* Journal header */}
       <div className="flex items-center gap-2 mb-1" style={{ pointerEvents: "none" }}>
         <span className="font-hand text-base font-semibold tracking-wider uppercase" style={{ color: "var(--text-muted)" }}>
@@ -107,7 +107,7 @@ export default function JournalPanel({ day, onDayUpdate }) {
       <textarea
         value={journalText}
         onChange={handleJournalChange}
-        className="font-hand text-base leading-relaxed p-2 w-full"
+        className="flex-1 font-hand text-base leading-relaxed p-2 w-full"
         style={{
           color: "var(--text)",
           lineHeight: "1.6",

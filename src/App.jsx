@@ -598,7 +598,7 @@ export default function App() {
             <div ref={rightPageRef} className="right-scroll-area flex-1 min-h-0 relative no-scrollbar">
               {/* Top section: Journal + Todo — fills remaining vertical space on desktop */}
               <div className="right-top-section px-3 pt-2 pb-0.5 md:flex-row md:gap-3 md:px-4 md:pt-3">
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 min-h-0">
                   <JournalPanel
                     key={weekData.days[selectedDayIndex]?.date}
                     day={weekData.days[selectedDayIndex]}

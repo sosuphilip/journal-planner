@@ -564,8 +564,17 @@ html, body, #root {
   }
 }
 
-/* Mobile: stack everything and scroll */
-@media (max-width: 768px) {
+/* Mobile portrait: stack everything, journal grows to fill, scroll for overflow */
+@media (max-width: 768px) and (orientation: portrait) {
+  .right-top-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+}
+
+/* Mobile landscape: stack everything, natural height, scroll */
+@media (max-width: 768px) and (orientation: landscape) {
   .right-top-section {
     display: flex;
     flex-direction: column;
