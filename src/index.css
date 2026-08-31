@@ -756,7 +756,7 @@ html, body, #root {
 }
 
 /* Mobile landscape — no bottom nav, show both pages side by side.
-   Safe area padding on the shell keeps content away from the notch. */
+   Compact everything so it fits without scrolling. */
 @media (max-height: 500px) and (orientation: landscape) {
   .mobile-nav {
     display: none !important;
@@ -772,5 +772,68 @@ html, body, #root {
 
   .mobile-hidden {
     display: flex !important;
+  }
+
+  /* Everything should fit — auto as safety net only */
+  .right-scroll-area {
+    overflow-y: auto !important;
+    padding-bottom: 0;
+  }
+
+  /* Compact the top section padding */
+  .right-top-section {
+    padding-top: 4px !important;
+    padding-bottom: 0 !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Journal textarea: shorter */
+  .right-top-section textarea {
+    min-height: 60px !important;
+    max-height: 80px;
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Mood line */
+  .right-top-section .mt-1\.5 {
+    margin-top: 2px !important;
+  }
+
+  /* Music section */
+  .right-top-section .mt-2 {
+    margin-top: 2px !important;
+  }
+  .right-top-section .p-1\.5 {
+    padding: 2px 4px !important;
+  }
+
+  /* Habits section: tighter padding */
+  .right-scroll-area > div:last-child {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Water tracker */
+  .flex.gap-2.flex-wrap {
+    gap: 0.25rem !important;
+  }
+
+  /* Habit cells: slightly smaller */
+  .habit-cell {
+    width: 0.85rem !important;
+    height: 0.85rem !important;
+  }
+
+  /* Water drops */
+  .water-drop {
+    width: 7px !important;
+    height: 9px !important;
+  }
+
+  /* Reduce base font slightly */
+  .right-scroll-area {
+    font-size: 0.85rem;
   }
 }
