@@ -26,20 +26,23 @@ export default function Checklist({ items = [], onChange, showCheckboxes = true,
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [animatingIdx, setAnimatingIdx] = useState(null);
 
+  // Filter out unchecked items with empty text (prevents ghost rows)
+  const cleanItems = (list) => list.filter((item) => item.text.trim() !== "" || item.checked);
+
   const toggleItem = (idx) => {
     setAnimatingIdx(idx);
     setTimeout(() => setAnimatingIdx(null), 200);
     const next = items.map((item, i) =>
       i === idx ? { ...item, checked: !item.checked } : item
     );
-    onChange(next);
+    onChange(cleanItems(next));
   };
 
   const updateText = (idx, text) => {
     const next = items.map((item, i) =>
       i === idx ? { ...item, text } : item
     );
-    onChange(next);
+    onChange(cleanItems(next));
   };
 
   const deleteItem = (idx) => {

@@ -27,6 +27,9 @@ export default function Auth() {
 
       if (authError) {
         setError(authError.message);
+        // Cooldown after failed login — prevents rapid brute-force retries
+        setTimeout(() => setLoading(false), 2000);
+        return;
       } else if (mode === "sign-up") {
         setError("Check your email for a confirmation link!");
       }

@@ -244,14 +244,18 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
           {/* Scrollable sticker area — grid + custom + upload */}
           <div style={{ overflowY: 'auto', maxHeight: '40vh', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {/* Built-in stickers grid */}
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="grid grid-cols-5 gap-1.5" role="group" aria-label="Built-in stickers">
               {Object.entries(BUILTIN_STICKERS).map(([name, svg]) => (
                 <div
                   key={name}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Place ${name} sticker`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, name)}
                   onClick={() => handleTapPlace(name)}
-                  className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors"
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTapPlace(name); } }}
+                  className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                   title={`Drag or tap ${name}`}
                 >
                   <div className="w-7 h-7">{svg}</div>
@@ -265,14 +269,18 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
                 <div className="font-hand text-sm" style={{ color: "var(--text-faint)" }}>
                   custom
                 </div>
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-5 gap-1.5" role="group" aria-label="Custom stickers">
                   {customStickers.map((cs) => (
                     <div
                       key={cs.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Place ${cs.name} sticker`}
                       draggable
                       onDragStart={(e) => handleDragStart(e, cs.id, true)}
                       onClick={() => handleTapPlace(cs.id, true)}
-                      className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors overflow-hidden"
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTapPlace(cs.id, true); } }}
+                      className="w-9 h-9 rounded-md flex items-center justify-center cursor-grab hover:bg-white/60 active:bg-white/80 transition-colors overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                       title={`Drag or tap ${cs.name}`}
                     >
                       <img
