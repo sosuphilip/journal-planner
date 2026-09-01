@@ -619,7 +619,7 @@ export default function App() {
                   />
                 </div>
 
-                <div className="w-full md:w-[42%] shrink-0 relative" style={{ overflow: 'visible' }}>
+                <div className="todo-card-container w-[38%] md:w-[42%] shrink-0 relative" style={{ overflow: 'visible' }}>
                   <TodoCard data={weekData.days[selectedDayIndex]?.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
                   <TodoStickerLayer
                     placedStickers={weekData.days[selectedDayIndex]?.todoStickers || []}

@@ -521,10 +521,21 @@ html, body, #root {
   width: 100%;
 }
 
-/* Mobile: scale down todo card slightly for better proportion consistency */
+/* Mobile: compact todo card for narrow side-by-side layout */
 @media (max-width: 768px) {
   .todo-card-container {
     overflow: visible;
+  }
+
+  /* Tighter padding on todo card to fit in narrow column */
+  .todo-card-container > .rounded-lg {
+    padding: 5px 6px !important;
+  }
+
+  /* Compact title row */
+  .todo-card-container > .rounded-lg > div:first-child {
+    gap: 4px;
+    margin-bottom: 4px;
   }
 }
 
@@ -628,12 +639,13 @@ html, body, #root {
   }
 }
 
-/* Mobile portrait: stack everything, journal grows to fill, scroll for overflow */
+/* Mobile portrait: journal + todo side by side (same as desktop, scaled down) */
 @media (max-width: 768px) and (orientation: portrait) {
   .right-top-section {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex: 1;
+    gap: 6px;
   }
 }
 
