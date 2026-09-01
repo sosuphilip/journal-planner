@@ -27,6 +27,7 @@ import TodoCard from "./components/TodoCard";
 import HabitAreas from "./components/HabitAreas";
 import StickerTray from "./components/StickerTray";
 import StickerLayer from "./components/StickerLayer";
+import TodoStickerLayer from "./components/TodoStickerLayer";
 
 /* ── Static decorative doodles (SVG, pointer-events: none) ────── */
 function Doodles() {
@@ -396,6 +397,20 @@ export default function App() {
     [weekStart, selectedDayIndex]
   );
 
+  const updateTodoStickers = useCallback(
+    (newPlaced) => {
+      setStore((prev) => {
+        if (!prev) return prev;
+        const wd = prev.weeks[weekStart];
+        if (!wd) return prev;
+        const newDays = [...wd.days];
+        newDays[selectedDayIndex] = { ...newDays[selectedDayIndex], todoStickers: newPlaced };
+        return { ...prev, weeks: { ...prev.weeks, [weekStart]: { ...wd, days: newDays } } };
+      });
+    },
+    [weekStart, selectedDayIndex]
+  );
+
   const updateCustomStickers = useCallback(
     (newCustom) => {
       setStore((prev) => (prev ? { ...prev, customStickers: newCustom } : prev));
@@ -604,8 +619,13 @@ export default function App() {
                   />
                 </div>
 
-                <div className="w-full md:w-[42%] shrink-0">
+                <div className="w-full md:w-[42%] shrink-0 relative" style={{ overflow: 'visible' }}>
                   <TodoCard data={weekData.days[selectedDayIndex]?.todoCard || { title: 'todo list', items: [] }} onUpdate={updateTodoCard} />
+                  <TodoStickerLayer
+                    placedStickers={weekData.days[selectedDayIndex]?.todoStickers || []}
+                    onPlacedChange={updateTodoStickers}
+                    customStickers={store.customStickers}
+                  />
                 </div>
               </div>
 
@@ -681,23 +701,38 @@ export default function App() {
           const wd = store.weeks[weekStart];
           const day = wd?.days[selectedDayIndex];
           if (!day) return;
-          // Left page occupies ~38% of notebook, right page ~62%
-          // Place sticker at center of the target page
-          const isLeft = targetPage === "left";
-          const newSticker = {
-            id: uid(),
-            stickerType,
-            isCustom: isCustom || false,
-            xP: isLeft ? 19 : 69,
-            yP: 30,
-            width: 50,
-            height: 50,
-            rotation: 0,
-          };
-          if (isLeft) {
-            updateLeftPlacedStickers([...(day.leftPlacedStickers || []), newSticker]);
+          if (targetPage === "todo") {
+            // Place sticker at center of the todo card
+            const newSticker = {
+              id: uid(),
+              stickerType,
+              isCustom: isCustom || false,
+              xP: 75,
+              yP: 80,
+              width: 40,
+              height: 40,
+              rotation: 0,
+            };
+            updateTodoStickers([...(day.todoStickers || []), newSticker]);
           } else {
-            updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
+            // Left page occupies ~38% of notebook, right page ~62%
+            // Place sticker at center of the target page
+            const isLeft = targetPage === "left";
+            const newSticker = {
+              id: uid(),
+              stickerType,
+              isCustom: isCustom || false,
+              xP: isLeft ? 19 : 69,
+              yP: 30,
+              width: 50,
+              height: 50,
+              rotation: 0,
+            };
+            if (isLeft) {
+              updateLeftPlacedStickers([...(day.leftPlacedStickers || []), newSticker]);
+            } else {
+              updateRightPlacedStickers([...(day.rightPlacedStickers || []), newSticker]);
+            }
           }
         }}
       />

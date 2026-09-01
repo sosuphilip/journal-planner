@@ -238,6 +238,17 @@ export default function StickerTray({ onStickerDrag, customStickers, onCustomSti
               >
                 📓 right
               </button>
+              <button
+                onClick={() => onPageSelect && onPageSelect("todo")}
+                className="text-xs font-hand px-2 py-0.5 rounded cursor-pointer transition-colors"
+                style={{
+                  background: activePage === "todo" ? "var(--color-dusty-blue)" : "transparent",
+                  color: activePage === "todo" ? "white" : "var(--text-faint)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                ✅ todo
+              </button>
             </div>
           </div>
 

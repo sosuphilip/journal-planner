@@ -509,6 +509,26 @@ html, body, #root {
 }
 
 /* ========================================
+   TODO CARD CONTAINER — consistent proportions for sticker positioning
+   ======================================== */
+.todo-card-container {
+  position: relative;
+  overflow: visible;
+}
+
+/* Ensure the todo card maintains consistent aspect ratio across breakpoints */
+.todo-card-container > .rounded-lg {
+  width: 100%;
+}
+
+/* Mobile: scale down todo card slightly for better proportion consistency */
+@media (max-width: 768px) {
+  .todo-card-container {
+    overflow: visible;
+  }
+}
+
+/* ========================================
    NOTEBOOK SPREAD CONTAINER
    ======================================== */
 /* App shell — safe area padding goes here */
