@@ -521,8 +521,8 @@ html, body, #root {
   width: 100%;
 }
 
-/* Mobile: compact todo card for narrow side-by-side layout */
-@media (max-width: 768px) {
+/* Mobile landscape: compact todo card for narrow side-by-side layout */
+@media (max-width: 768px) and (orientation: landscape) {
   .todo-card-container {
     overflow: visible;
   }
@@ -639,21 +639,21 @@ html, body, #root {
   }
 }
 
-/* Mobile portrait: journal + todo side by side (same as desktop, scaled down) */
+/* Mobile portrait: journal full-width, todo stacked below (original layout) */
 @media (max-width: 768px) and (orientation: portrait) {
   .right-top-section {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex: 1;
-    gap: 6px;
   }
 }
 
-/* Mobile landscape: stack everything, natural height, scroll */
+/* Mobile landscape: journal + todo side by side (matching desktop) */
 @media (max-width: 768px) and (orientation: landscape) {
   .right-top-section {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 4px;
   }
 }
 
@@ -858,18 +858,18 @@ html, body, #root {
     padding-bottom: 0;
   }
 
-  /* Top section: column layout + fill remaining height */
+  /* Top section: row layout + fill remaining height */
   .right-top-section {
-    flex-direction: column !important;
+    flex-direction: row !important;
     flex: 1 !important;
     padding-top: 4px !important;
     padding-bottom: 0 !important;
-    gap: 0.25rem !important;
+    gap: 4px !important;
   }
 
-  /* Journal textarea: scale with viewport height */
+  /* Journal textarea: fill height, compact */
   .right-top-section textarea {
-    min-height: 60px !important;
+    min-height: 40px !important;
     max-height: calc(40vh - 20px);
     padding: 4px 8px !important;
     font-size: 0.8rem !important;
